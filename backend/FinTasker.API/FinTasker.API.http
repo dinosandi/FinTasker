@@ -1,0 +1,6 @@
+@FinTasker.API_HostAddress = http://localhost:5105
+
+GET {{FinTasker.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

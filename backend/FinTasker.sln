@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTasker.API", "FinTasker.API\FinTasker.API.csproj", "{533F44FF-A5E3-457B-A58D-CB2EFE1767B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTasker.Application", "FinTasker.Application\FinTasker.Application.csproj", "{A0A3D6E7-CD89-4B62-BB37-BD79AEF7ADFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTasker.Domain", "FinTasker.Domain\FinTasker.Domain.csproj", "{7E226B17-D7A9-480B-8C4A-E892F8FC7864}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinTasker.Infrastructure", "FinTasker.Infrastructure\FinTasker.Infrastructure.csproj", "{9FC578E7-F440-4D8F-BF94-0741C34D38DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{533F44FF-A5E3-457B-A58D-CB2EFE1767B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{533F44FF-A5E3-457B-A58D-CB2EFE1767B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{533F44FF-A5E3-457B-A58D-CB2EFE1767B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{533F44FF-A5E3-457B-A58D-CB2EFE1767B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A3D6E7-CD89-4B62-BB37-BD79AEF7ADFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A3D6E7-CD89-4B62-BB37-BD79AEF7ADFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A3D6E7-CD89-4B62-BB37-BD79AEF7ADFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A3D6E7-CD89-4B62-BB37-BD79AEF7ADFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E226B17-D7A9-480B-8C4A-E892F8FC7864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E226B17-D7A9-480B-8C4A-E892F8FC7864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E226B17-D7A9-480B-8C4A-E892F8FC7864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E226B17-D7A9-480B-8C4A-E892F8FC7864}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FC578E7-F440-4D8F-BF94-0741C34D38DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FC578E7-F440-4D8F-BF94-0741C34D38DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FC578E7-F440-4D8F-BF94-0741C34D38DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FC578E7-F440-4D8F-BF94-0741C34D38DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
