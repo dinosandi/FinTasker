@@ -5,8 +5,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.74.0" />
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\" />
+    <Folder Include="Common\Interfaces\" />
+    <Folder Include="Common\Models\" />
+    <Folder Include="Features\Auth\Commands\Login\" />
+    <Folder Include="Users\" />
+    <Folder Include="Users\Command\" />
+    <Folder Include="Users\Command\Login\" />
+    <Folder Include="Users\Handler\" />
   </ItemGroup>
 
   <PropertyGroup>

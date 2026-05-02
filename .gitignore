@@ -6,6 +6,7 @@ dist/
 build/
 .env
 .env.*
+*.env
 
 # Logs
 logs/
@@ -25,31 +26,70 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 frontend/.env
+frontend/.env.*
 
 # ======================
 # BACKEND (.NET)
 # ======================
+
+# Build output
 backend/bin/
 backend/obj/
+
+# User / IDE files
 backend/*.user
 backend/*.suo
 backend/*.cache
+
+# Compiled files
 backend/*.dll
 backend/*.exe
+backend/*.pdb
+
+# 🔥 PENTING: config hasil build
+backend/**/*.runtimeconfig.json
+backend/**/*.deps.json
+
+# 🔥 PENTING BANGET: appsettings hasil build
+backend/**/appsettings.*.json
+
+# ======================
+# GLOBAL .NET (lebih aman)
+# ======================
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
 
 # ======================
 # IGNORE KHUSUS KAMU
 # ======================
 
-# Folder assets (dimanapun berada)
+# Folder assets (hati-hati kalau ada yang penting)
 **/assets/
 
-# File dokumentasi.tsxt
-dokumentasi.tsxt
+# File dokumentasi
+Dokumentasi.txt
 
 # ======================
-# OPTIONAL (kalau ada)
+# SECURITY (WAJIB)
+# ======================
+
+# Secret & config sensitif
+*.key
+*.pem
+*.pfx
+*.secret
+secrets.json
+
+# ======================
+# OPTIONAL (DEV TOOLS)
 # ======================
 coverage/
 .vscode/
 .idea/
+*.swp
