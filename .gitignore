@@ -7,6 +7,15 @@ build/
 .env
 .env.*
 
+
+# .NET
+backend/**/bin/
+backend/**/obj/
+
+# appsettings (sensitive)
+backend/**/appsettings.json
+backend/**/appsettings.Development.json
+
 # Logs
 logs/
 *.log
@@ -45,7 +54,7 @@ backend/*.exe
 **/assets/
 
 # File dokumentasi.tsxt
-dokumentasi.tsxt
+Dokumentasi.tsxt
 
 # ======================
 # OPTIONAL (kalau ada)
