@@ -3,93 +3,92 @@ using Microsoft.EntityFrameworkCore;
 using FinTasker.Application.Common.Interfaces;
 using MediatR;
 using System.Reflection;
-
-
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers();
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// ✅ LOAD CONFIG DI AWAL (PENTING)
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 
-builder.Services.AddScoped<IJwtService, JwtService>();
+// ✅ DEBUG (optional, hapus nanti)
+Console.WriteLine("ClientId: " + builder.Configuration["Authentication:Google:ClientId"]);
 
-//Root Clean Architecture: Register AppDbContext and IAppDbContext
+
+// ✅ AUTHENTICATION
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+
+    options.ClientId = googleAuth["ClientId"];
+    options.ClientSecret = googleAuth["ClientSecret"];
+});
+
+
+// ✅ CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
+
+// ✅ SERVICES
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
+// ✅ DATABASE
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
 
+
+// ✅ MEDIATR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.Load("FinTasker.Application")));
 
 
+// ✅ CUSTOM SERVICES
 builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 
-
-var googleSection = builder.Configuration.GetSection("Authentication:Google");
-
-builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultScheme = "Cookies";
-        options.DefaultChallengeScheme = "Google";
-    })
-    .AddCookie()
-    .AddGoogle(options =>
-    {
-        options.ClientId = googleSection.GetValue<string>("ClientId")!;
-        options.ClientSecret = googleSection.GetValue<string>("ClientSecret")!;
-        options.CallbackPath = "/signin-google";
-        Console.WriteLine($"ClientId: {googleSection["ClientId"]}");
-    });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+// ✅ MIDDLEWARE
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
 
-app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

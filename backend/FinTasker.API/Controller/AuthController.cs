@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using FinTasker.Application.Features.Auth.Commands.Login;
 using FinTasker.Application.Common.Models;
+using Microsoft.AspNetCore.Authentication;
 
 namespace FinTasker.API.Controllers
 {
@@ -16,9 +17,9 @@ namespace FinTasker.API.Controllers
             _mediator = mediator;
         }
 
-        /// <summary>
+
         /// Login menggunakan Google
-        /// </summary>
+
         [HttpPost("google-login")]
         public async Task<ActionResult<ApiResponse<AuthResponse>>> LoginWithGoogle([FromBody] LoginCommand command)
         {
@@ -29,5 +30,19 @@ namespace FinTasker.API.Controllers
 
             return Ok(result);
         }
+        
+         [HttpGet("google-response")]
+    public async Task<IActionResult> GoogleResponse()
+    {
+        var result = await HttpContext.AuthenticateAsync();
+
+        if (!result.Succeeded)
+            return BadRequest("Google authentication failed");
+
+        var claims = result.Principal.Identities
+            .FirstOrDefault()?.Claims;
+
+        return Ok(claims.Select(c => new { c.Type, c.Value }));
+    }
     }
 }
