@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using FinTasker.Application.Features.Auth.Commands.Login;
+using FinTasker.Application.Features.Auth.Commands.LoginWithGoogle;
+using FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail;
 using FinTasker.Application.Common.Models;
 using Microsoft.AspNetCore.Authentication;
+using FinTasker.Application.Features.Auth.Commands.Register;
 
 namespace FinTasker.API.Controllers
 {
@@ -21,7 +23,7 @@ namespace FinTasker.API.Controllers
         /// Login menggunakan Google
 
         [HttpPost("google-login")]
-        public async Task<ActionResult<ApiResponse<AuthResponse>>> LoginWithGoogle([FromBody] LoginCommand command)
+        public async Task<ActionResult<ApiResponse<AuthResponse>>> LoginWithGoogle([FromBody] LoginWithGoogle command)
         {
             var result = await _mediator.Send(command);
 
@@ -30,19 +32,44 @@ namespace FinTasker.API.Controllers
 
             return Ok(result);
         }
+
+        // Login menggunakan Email dan Password 
+        [HttpPost("login")]
+        public async Task<ActionResult<ApiResponse<AuthResponse>>> LoginManualCommand([FromBody] LoginManualCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+                return BadRequest("User not found or invalid email/password");
+
+            return Ok(result);
+        }
+
+        // API untuk Register
+        [HttpPost("register")]
+        public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+                return BadRequest("Registration failed");
+
+            return Accepted(result);
+        }
+
         
          [HttpGet("google-response")]
-    public async Task<IActionResult> GoogleResponse()
-    {
-        var result = await HttpContext.AuthenticateAsync();
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync();
 
-        if (!result.Succeeded)
-            return BadRequest("Google authentication failed");
+            if (!result.Succeeded)
+                return BadRequest("Google authentication failed");
 
-        var claims = result.Principal.Identities
-            .FirstOrDefault()?.Claims;
+            var claims = result.Principal.Identities
+                .FirstOrDefault()?.Claims;
 
-        return Ok(claims.Select(c => new { c.Type, c.Value }));
-    }
-    }
+            return Ok(claims.Select(c => new { c.Type, c.Value }));
+        }
+        }
 }

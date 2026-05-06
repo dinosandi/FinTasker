@@ -7,7 +7,7 @@ namespace FinTasker.Domain.Entities
     {
         public Guid Id { get; set; }
 
-        // 🔐 Authentication
+        // Authentication
         public string Email { get; set; }
         public string? PasswordHash { get; set; } // null kalau Google login
         public AuthProvider Provider { get; set; } // Local / Google

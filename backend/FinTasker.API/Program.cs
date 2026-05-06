@@ -5,21 +5,20 @@ using MediatR;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using FinTasker.Infrastructure.Services;
+using FinTasker.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-// ✅ LOAD CONFIG DI AWAL (PENTING)
+// LOAD CONFIG DI AWAL 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 
-// ✅ DEBUG (optional, hapus nanti)
-Console.WriteLine("ClientId: " + builder.Configuration["Authentication:Google:ClientId"]);
 
-
-// ✅ AUTHENTICATION
+// AUTHENTICATION
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -36,7 +35,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 
-// ✅ CORS
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -50,13 +49,14 @@ builder.Services.AddCors(options =>
 });
 
 
-// ✅ SERVICES
+// SERVICES
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-// ✅ DATABASE
+
+//  DATABASE
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -64,24 +64,30 @@ builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
 
 
-// ✅ MEDIATR
+//  MEDIATR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.Load("FinTasker.Application")));
 
 
-// ✅ CUSTOM SERVICES
+//  CUSTOM SERVICES
 builder.Services.AddScoped<IJwtService, JwtService>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IUserRepository, userRepository>();
 
 
 var app = builder.Build();
 
 
-// ✅ MIDDLEWARE
+//  MIDDLEWARE
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<FinTasker.API.Middleware.GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");

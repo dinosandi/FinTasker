@@ -22,4 +22,8 @@
     <ProjectReference Include="..\FinTasker.Infrastructure\FinTasker.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+
 </Project>

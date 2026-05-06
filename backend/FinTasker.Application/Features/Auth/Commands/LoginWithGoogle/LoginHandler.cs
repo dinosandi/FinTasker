@@ -6,10 +6,11 @@ using FinTasker.Domain.Entities;
 using FinTasker.Domain.Enums;
 using Microsoft.Extensions.Configuration;
 using FinTasker.Application.Common.Interfaces;
+using FinTasker.Application.Common.Exceptions;
 
-namespace FinTasker.Application.Features.Auth.Commands.Login
+namespace FinTasker.Application.Features.Auth.Commands.LoginWithGoogle
 {
-    public class LoginHandler : IRequestHandler<LoginCommand, ApiResponse<AuthResponse>>
+    public class LoginHandler : IRequestHandler<LoginWithGoogle, ApiResponse<AuthResponse>>
     {
         private readonly IAppDbContext _context;
         private readonly IConfiguration _config;
@@ -22,7 +23,7 @@ namespace FinTasker.Application.Features.Auth.Commands.Login
             _config = config;
         }
 
-        public async Task<ApiResponse<AuthResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<AuthResponse>> Handle(LoginWithGoogle request, CancellationToken cancellationToken)
         {
             try
             {
@@ -81,9 +82,9 @@ namespace FinTasker.Application.Features.Auth.Commands.Login
 
                 return ApiResponse<AuthResponse>.SuccessResponse(response, "Login Google berhasil");
             }
-            catch (Exception ex)
+            catch (NotFoundException ex)
             {
-                return ApiResponse<AuthResponse>.Fail($"Login gagal: {ex.Message}");
+                throw new NotFoundException("Google user not found", ex);                
             }
         }
     }

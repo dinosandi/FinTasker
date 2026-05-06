@@ -8,6 +8,7 @@ namespace FinTasker.Application.Common.Models
         public bool IsProfileCompleted { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
+
     }
 
 }
