@@ -20,7 +20,7 @@ public class JwtService : IJwtService
         var key = _config["Jwt:Key"];
         var issuer = _config["Jwt:Issuer"];
         var audience = _config["Jwt:Audience"];
-        var expireMinutes = int.Parse(_config["Jwt:ExpireMinutes"]);
+        var expireMinutes = int.Parse(_config["Jwt:ExpireMinutes"] ?? "60");
 
         var claims = new List<Claim>
         {

@@ -43,8 +43,11 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
                 Message = "Login successful",
                 Data = new AuthResponse
                 {
-                    Token = token,
+                    Name = users.Name,
+                    Email = users.Email,
                     IsProfileCompleted = users.IsProfileCompleted,
+                    Token = token,
+
                 }
             };
         }
