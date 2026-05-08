@@ -1,11 +1,12 @@
 using System;
-
 namespace FinTasker.Domain.Enums
 {
-    public enum TaskStatus
+    public enum StatusTask
     {
         ToDo,
         InProgress,
-        Done
+        Review,
+        Completed,
+        Cancelled
     }
 }
