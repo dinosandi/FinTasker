@@ -33,5 +33,11 @@ namespace FinTasker.Domain.Entities
         // Audit
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        // Navigation properties
+        public ICollection<ProductivityReports> ProductivityReports { get; set; }
+        public ICollection<Projects> Projects { get; set; }
+        public ICollection<Notifications> Notifications { get; set; }
+
     }
 }

@@ -1,6 +1,8 @@
 using FinTasker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using FinTasker.Application.Common.Interfaces;
+using FinTasker.Application.Common.Interfaces.Service;
+using FinTasker.Application.Common.Interfaces.Repository;
 using MediatR;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -69,12 +71,17 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.Load("FinTasker.Application")));
 
 
-//  CUSTOM SERVICES
-builder.Services.AddScoped<IJwtService, JwtService>();
+//  SERVICES
+builder.Services.AddHttpContextAccessor(); 
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<IUserRepository, userRepository>();
+
+builder.Services.AddScoped<IProjectsService, ProjectsService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 
 
 var app = builder.Build();

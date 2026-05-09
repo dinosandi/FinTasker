@@ -1,7 +1,7 @@
 
 using FinTasker.Domain.Entities;
 
-namespace FinTasker.Application.Common.Interfaces
+namespace FinTasker.Application.Common.Interfaces.Service
 {
     public interface IJwtService
     {
