@@ -14,12 +14,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\" />
     <Folder Include="Common\Exceptions\" />
-    <Folder Include="Common\Interfaces\" />
     <Folder Include="Common\Models\" />
     <Folder Include="Features\Auth\Commands\LoginManualWithEmail\" />
     <Folder Include="Features\Auth\Commands\LoginWithGoogle\" />
+    <Folder Include="Features\Projects\" />
+    <Folder Include="Features\Projects\Commands\" />
+    <Folder Include="Features\Projects\Commands\Command\" />
+    <Folder Include="Features\Projects\Commands\Handler\" />
+    <Folder Include="Features\Projects\Queries\" />
+    <Folder Include="Features\Tasks\" />
+    <Folder Include="Features\Tasks\Commands\" />
     <Folder Include="Users\" />
     <Folder Include="Users\Command\" />
     <Folder Include="Users\Command\Login\" />

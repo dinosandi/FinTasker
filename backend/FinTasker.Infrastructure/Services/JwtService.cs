@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
-using FinTasker.Application.Common.Interfaces;
+using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Domain.Entities;
 
 public class JwtService : IJwtService

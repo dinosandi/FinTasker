@@ -1,15 +1,15 @@
 using FinTasker.Domain.Entities;
-using FinTasker.Application.Common.Interfaces;
+using FinTasker.Application.Common.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
 using FinTasker.Infrastructure.Persistence;
 
 
 namespace FinTasker.Infrastructure.Repositories
 {
-    public class userRepository : IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
-        public userRepository(AppDbContext context)
+        public UserRepository(AppDbContext context)
         {
             _context = context;
         }

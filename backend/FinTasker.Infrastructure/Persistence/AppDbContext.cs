@@ -51,7 +51,7 @@ namespace FinTasker.Infrastructure.Persistence
                 .IsUnique();
 
             modelBuilder.Entity<Projects>()
-                .HasOne(x => x.User)
+                .HasOne(x => x.Users)
                 .WithMany(x => x.Projects)
                 .HasForeignKey(x => x.UsersId)
                 .OnDelete(DeleteBehavior.Cascade);

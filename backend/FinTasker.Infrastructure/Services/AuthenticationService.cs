@@ -1,4 +1,4 @@
-using FinTasker.Application.Common.Interfaces;
+using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Domain.Entities;
 using FinTasker.Infrastructure.Persistence;
 

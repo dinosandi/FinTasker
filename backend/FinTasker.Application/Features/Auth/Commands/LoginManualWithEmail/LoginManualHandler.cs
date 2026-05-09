@@ -1,5 +1,5 @@
 using FinTasker.Application.Common.Exceptions;
-using FinTasker.Application.Common.Interfaces;
+using FinTasker.Application.Common.Interfaces.Service;
 using MediatR;
 using FinTasker.Application.Common.Models;  
 

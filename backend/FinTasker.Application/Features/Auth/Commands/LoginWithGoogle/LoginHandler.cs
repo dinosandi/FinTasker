@@ -6,6 +6,7 @@ using FinTasker.Domain.Entities;
 using FinTasker.Domain.Enums;
 using Microsoft.Extensions.Configuration;
 using FinTasker.Application.Common.Interfaces;
+using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Application.Common.Exceptions;
 
 namespace FinTasker.Application.Features.Auth.Commands.LoginWithGoogle
