@@ -37,6 +37,7 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
             // generate token JWT
             var token = _authenticationService.GenerateToken(users);
 
+
             return new ApiResponse<AuthResponse>
             {
                 Success = true,
@@ -46,7 +47,8 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
                     Name = users.Name,
                     Email = users.Email,
                     IsProfileCompleted = users.IsProfileCompleted,
-                    Token = token,
+                    AccessToken = token,
+                    RefreshToken = string.Empty
 
                 }
             };

@@ -29,6 +29,7 @@ namespace FinTasker.Domain.Entities
         //  Security
         public bool IsEmailVerified { get; set; }
         public DateTime? LastLoginAt { get; set; }
+        
 
         // Audit
         public DateTime CreatedAt { get; set; }

@@ -70,12 +70,15 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginWithGoogle
 
                 await _context.SaveChangesAsync(cancellationToken);
 
+                //
+
                 // Generate JWT 
                 var token = _jwtService.GenerateToken(user);
 
                 var response = new AuthResponse
                 {
-                    Token = token,
+                    AccessToken = token,
+                    RefreshToken = string.Empty, 
                     Email = user.Email,
                     Name = user.Name,
                     IsProfileCompleted = user.IsProfileCompleted
