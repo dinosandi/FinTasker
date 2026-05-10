@@ -5,6 +5,7 @@ using FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail;
 using FinTasker.Application.Common.Models;
 using Microsoft.AspNetCore.Authentication;
 using FinTasker.Application.Features.Auth.Commands.Register;
+using FinTasker.Application.Common.Interfaces.Service;
 
 namespace FinTasker.API.Controllers
 {
@@ -13,10 +14,12 @@ namespace FinTasker.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICookieService _cookieService;
 
-        public AuthController(IMediator mediator)
+        public AuthController(IMediator mediator, ICookieService cookieService)
         {
             _mediator = mediator;
+            _cookieService = cookieService;
         }
 
 
@@ -34,15 +37,14 @@ namespace FinTasker.API.Controllers
         }
 
         // Login menggunakan Email dan Password 
-        [HttpPost("login")]
-        public async Task<ActionResult<ApiResponse<AuthResponse>>> LoginManualCommand([FromBody] LoginManualCommand command)
+         [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginManualCommand command)
         {
-            var result = await _mediator.Send(command);
-
-            if (!result.Success)
-                return BadRequest("User not found or invalid email/password");
-
-            return Ok(result);
+            var result = await _mediator.Send(command); // hasil: { AccessToken, RefreshToken, User }
+            
+            _cookieService.SetAuthCookies(Response, result.Data.AccessToken, result.Data.RefreshToken);
+            
+            return Ok(new { result.Data }); // Jangan return token ke body!
         }
 
         // API untuk Register

@@ -11,6 +11,7 @@ namespace FinTasker.Infrastructure.Persistence
         {
         }
         public DbSet<Users> Users { get; set; }
+        public DbSet<RefreshTokens> RefreshTokens { get; set; }
 
         public DbSet<Projects> Projects { get; set; }
 
@@ -31,7 +32,7 @@ namespace FinTasker.Infrastructure.Persistence
 
         public DbSet<TaskResources> TaskResources { get; set; }
 
-       
+
         public DbSet<ProductivityReports> ProductivityReports { get; set; }
 
         public DbSet<PomodoroSession> PomodoroSession { get; set; }
@@ -41,6 +42,23 @@ namespace FinTasker.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<RefreshTokens>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Token)
+                    .IsRequired()
+                    .HasMaxLength(512);
+
+                entity.HasIndex(e => e.Token).IsUnique();
+
+                entity.HasOne(e => e.Users)
+                    .WithMany() // atau WithMany(u => u.RefreshTokens) jika mau tambahkan collection di Users
+                    .HasForeignKey(e => e.UsersId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
 
             modelBuilder.Entity<Users>()
                 .HasIndex(x => x.Email)
