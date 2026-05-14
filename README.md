@@ -5,5 +5,5 @@
 </p>
 
 <p align="center">
-  Modern Project Management Application
+  Project Management Application
 </p>
