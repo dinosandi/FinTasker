@@ -4,7 +4,10 @@ namespace FinTasker.Application.Common.Interfaces.Service
 {
     public interface ICurrentUserService
     {
-        Guid GetCurrentUserId();
+        Guid? UserId { get; }
+        string? Email { get; }
+        bool IsAuthenticated { get; }
     }
+
 }
 

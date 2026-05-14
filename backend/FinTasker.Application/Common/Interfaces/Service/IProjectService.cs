@@ -7,7 +7,7 @@ namespace FinTasker.Application.Common.Interfaces.Service
     {
         
         Task CreateProjectsAsync(Projects Projects);
-        // Task<Projects> GetProjectsByIdAsync(Guid ProjectsId); // mengambil data Projects berdasarkan ID
+        Task<Projects> GetProjectsByIdAsync(Guid ProjectId); // mengambil data Projects berdasarkan ID
 
         // Task UpdateProjectsAsync(Projects Projects); // memperbarui data Projects yang sudah ada
         // Task DeleteProjectsAsync(Guid ProjectsId); // menghapus data Projects berdasarkan ID

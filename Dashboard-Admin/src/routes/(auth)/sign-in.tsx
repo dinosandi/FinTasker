@@ -1,12 +1,19 @@
-import { z } from 'zod'
-import { createFileRoute } from '@tanstack/react-router'
-import { SignIn } from '@/features/auth/sign-in'
+import { createFileRoute, redirect } from "@tanstack/react-router"
+import { fetchMe } from "@/hooks/useQuery/useMe"
+import {SignIn } from "@/features/auth/sign-in"
 
-const searchSchema = z.object({
-  redirect: z.string().optional(),
-})
-
-export const Route = createFileRoute('/(auth)/sign-in')({
+export const Route = createFileRoute("/(auth)/sign-in")({
+  beforeLoad: async () => {
+    try {
+      await fetchMe()
+      // Kalau fetchMe berhasil → sudah login → ke dashboard
+      throw redirect({ to: "/", replace: true })
+    } catch (error: any) {
+      // Kalau error 401 → belum login → lanjut render sign-in
+      if (error?.response?.status === 401) return
+      // Error lain (misal redirect) → lempar ulang
+      throw error
+    }
+  },
   component: SignIn,
-  validateSearch: searchSchema,
 })
