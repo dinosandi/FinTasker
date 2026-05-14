@@ -1,27 +1,36 @@
 using System.Security.Claims;
-using FinTasker.Application.Common.Interfaces.Service;
 using Microsoft.AspNetCore.Http;
+using FinTasker.Application.Common.Interfaces.Service;
 
-namespace FinTasker.Infrastructure.Services
+namespace FinTasker.Infrastructure.Services;
+
+public class CurrentUserService : ICurrentUserService
 {
-    public class CurrentUserService : ICurrentUserService
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        _httpContextAccessor = httpContextAccessor;
+    }
 
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+    private ClaimsPrincipal? User
+        => _httpContextAccessor.HttpContext?.User;
+
+    public Guid? UserId
+    {
+        get
         {
-            _httpContextAccessor = httpContextAccessor;
-        }
+            var value = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? User?.FindFirst("sub")?.Value;
 
-        public Guid GetCurrentUserId()
-        {
-            var userId = _httpContextAccessor
-                .HttpContext?
-                .User?
-                .FindFirst(ClaimTypes.NameIdentifier)?
-                .Value;
-
-            return Guid.Parse(userId!);
+            return Guid.TryParse(value, out var id) ? id : null;
         }
     }
+
+    public string? Email
+        => User?.FindFirst(ClaimTypes.Email)?.Value
+        ?? User?.FindFirst("email")?.Value;
+
+    public bool IsAuthenticated
+        => User?.Identity?.IsAuthenticated ?? false;
 }

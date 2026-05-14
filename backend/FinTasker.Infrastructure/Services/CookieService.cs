@@ -32,8 +32,8 @@ namespace FinTasker.Infrastructure.Services
             var accessCookieOptions = new CookieOptions
             {
                 HttpOnly = true,            
-                Secure = isProduction,      // HTTPS only di production, false di development
-                SameSite = SameSiteMode.Strict,
+                Secure = false,      // HTTPS only di production, false di development
+                SameSite = SameSiteMode.Lax, // Ubah ketika naik ke production menjadi Strict
                 Expires = DateTimeOffset.UtcNow.AddMinutes(accessTokenExpire),
                 Path = "/"
             };
@@ -43,9 +43,9 @@ namespace FinTasker.Infrastructure.Services
             {
                 HttpOnly = true,
                 Secure = isProduction,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddDays(refreshTokenExpireDays),
-                Path = "/api/auth"          // Batasi path — hanya dikirim ke endpoint auth
+                Path = "/api/Auth"    // Membatasi path — hanya dikirim ke endpoint auth
             };
 
             response.Cookies.Append(AccessTokenCookie, accessToken, accessCookieOptions);

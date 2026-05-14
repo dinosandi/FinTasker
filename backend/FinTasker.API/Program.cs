@@ -23,16 +23,16 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 
+builder.Services.AddHttpContextAccessor();
 
 // AUTHENTICATION
 builder.Services.AddAuthentication(options =>
 {
-    // Hanya skema default di sini
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // tetap untuk Google
 })
-.AddJwtBearer(options =>                    // JWT Bearer config di sini
+.AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -43,11 +43,9 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
-        )
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
 
-    // Baca token dari cookie, bukan Authorization header
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
@@ -56,7 +54,35 @@ builder.Services.AddAuthentication(options =>
             if (!string.IsNullOrEmpty(token))
                 context.Token = token;
             return Task.CompletedTask;
-        }
+        },
+        OnChallenge = async context =>
+        {
+            context.HandleResponse();
+
+            context.Response.StatusCode = 401;
+            context.Response.ContentType = "application/json";
+
+            await context.Response.WriteAsJsonAsync(new
+            {
+                success = false,
+                message = "User is not authenticated.",
+                statusCode = 401,
+                traceId = context.HttpContext.TraceIdentifier
+            });
+        },
+        OnForbidden = async context =>
+        {
+            context.Response.StatusCode = 403;
+            context.Response.ContentType = "application/json";
+
+            await context.Response.WriteAsJsonAsync(new
+            {
+                success = false,
+                message = "You do not have permission.",
+                statusCode = 403,
+                traceId = context.HttpContext.TraceIdentifier
+            });
+        },
     };
 })
 .AddCookie()
@@ -112,11 +138,14 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
-builder.Services.AddScoped<IProjectsService, ProjectsService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IProjectsService, ProjectsService>();
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 
+builder.Services.AddScoped<ITasksRepository, TasksRepository>();
+builder.Services.AddScoped<ITasksService, TasksService>();
 
 var app = builder.Build();
 
@@ -130,7 +159,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<FinTasker.API.Middleware.GlobalExceptionMiddleware>();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Nonaktifkan untuk development agar tidak perlu setup HTTPS
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();

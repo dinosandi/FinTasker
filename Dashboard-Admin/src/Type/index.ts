@@ -1,8 +1,3 @@
-// auth and users
-export interface AuthLogin {
-    email: string;
-    passwordHash: string;
-}
 
 export interface RegisterUser {
     email: string;
@@ -15,4 +10,56 @@ export interface RegisterUser {
 export enum Role {
     admin = 1,
     user = 0,
+}
+// login with google
+export interface GoogleLogin {
+    idToken: string;
+}
+
+
+
+// Projects
+export interface Project {
+    UsersId: string; // nanti ambil dari token/login user
+    Name: string;
+    Description: string;
+    Status: ProjectStatus;
+    Color: string;
+    StartDate: Date;
+    EndDate: Date;
+}
+export enum ProjectStatus {
+    NotStarted,
+    InProgress,
+    Completed,
+    Cancelled
+}
+
+// Tasks
+export interface Tasks {
+    ProjectId: string;
+    Title: string;
+    Description: string;
+    Status: TaskStatus;
+    Priority: TaskPriority;
+    DueDate: string;
+    CompletedAt : string;
+    Estimed_Minutes : number;
+    UpdatedAt : string;
+    CreatedAt : string;
+}
+
+export enum TaskStatus {
+    ToDo,
+    InProgress,
+    Review,
+    Completed,
+    Cancelled
+}
+
+export enum TaskPriority {
+    Low,
+    Medium,
+    High,
+    Critical
 }

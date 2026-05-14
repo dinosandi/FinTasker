@@ -19,6 +19,9 @@
     <Folder Include="Common\Models\" />
     <Folder Include="Features\Auth\Commands\LoginManualWithEmail\" />
     <Folder Include="Features\Auth\Commands\LoginWithGoogle\" />
+    <Folder Include="Features\Auth\Commands\RefreshToken\" />
+    <Folder Include="Features\Auth\Queries\" />
+    <Folder Include="Features\Auth\Queries\GetCurrentUser\" />
     <Folder Include="Features\Projects\" />
     <Folder Include="Features\Projects\Commands\" />
     <Folder Include="Features\Projects\Commands\Command\" />
@@ -26,6 +29,8 @@
     <Folder Include="Features\Projects\Queries\" />
     <Folder Include="Features\Tasks\" />
     <Folder Include="Features\Tasks\Commands\" />
+    <Folder Include="Features\Tasks\Commands\Command\" />
+    <Folder Include="Features\Tasks\Commands\Handler\" />
     <Folder Include="Users\" />
     <Folder Include="Users\Command\" />
     <Folder Include="Users\Command\Login\" />

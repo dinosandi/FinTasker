@@ -1,15 +1,36 @@
-import { useMutation } from '@tanstack/react-query'
-import { api } from '@/config/api'
-import { AuthLogin } from '@/Type'
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
+import { api } from "@/config/api"
+import { useAuthStore } from "@/stores/auth-store"
+
+interface LoginPayload {
+  email: string
+  password: string
+}
+
+interface ApiResponse<T> {
+  success: boolean
+  message: string
+  data: T
+}
 
 export const usePostLogin = () => {
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  const clearUser = useAuthStore((s) => s.clearUser)
+
   return useMutation({
-    mutationKey: ['login'],
+    mutationFn: (payload: LoginPayload) =>
+      api.post<ApiResponse<null>>("/Auth/login", payload),
 
-    mutationFn: async (data: AuthLogin) => {
-      const response = await api.post('/Auth/login', data)
+    onSuccess: async () => {
+      // Invalidate cache /me agar di-fetch ulang dengan cookie baru
+      await queryClient.invalidateQueries({ queryKey: ["auth", "me"] })
+      navigate({ to: "/", replace: true })
+    },
 
-      return response.data
+    onError: () => {
+      clearUser()
     },
   })
 }

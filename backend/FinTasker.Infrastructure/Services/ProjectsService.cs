@@ -20,6 +20,12 @@ namespace FinTasker.Infrastructure.Services
             await _context.Projects.AddAsync(project);
             await _context.SaveChangesAsync();
         }
+        public async Task<Projects> GetProjectsByIdAsync(Guid projectId)
+        {
+            return await _context.Projects
+            .AsNoTracking() // Menambahkan AsNoTracking untuk meningkatkan performa saat hanya membaca data
+            .FirstOrDefaultAsync(p => p.Id == projectId);
+        }
         
 
         // public async Task UpdateProjectAsync(Projects project)

@@ -1,11 +1,9 @@
-using System;
-using System.Threading.Tasks;
+using System.Net;
 using FinTasker.Application.Common.Exceptions;
 
+namespace FinTasker.API.Middleware;
 
-namespace FinTasker.API.Middleware
-{
-    public class GlobalExceptionMiddleware
+public class GlobalExceptionMiddleware
 {
     private readonly RequestDelegate _next;
 
@@ -26,19 +24,37 @@ namespace FinTasker.API.Middleware
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception ex)
+    private static async Task HandleExceptionAsync(
+
+        HttpContext context,
+        Exception exception)
     {
+
+        // traceId untuk melacak error yang terjadi, bisa digunakan untuk debugging
+        var traceId = context.TraceIdentifier;
+        Console.WriteLine($"Error occurred. TraceId: {traceId}, Exception: {exception}");
+        Console.WriteLine($"Message: {exception.Message}");
+
         var response = context.Response;
+
         response.ContentType = "application/json";
 
-        int statusCode = ex switch
+        var statusCode = exception switch
         {
-            KeyNotFoundException => StatusCodes.Status404NotFound,
-            ArgumentException => StatusCodes.Status400BadRequest,
-            UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
-            NotFoundException => StatusCodes.Status404NotFound,
-            BadRequestException => StatusCodes.Status400BadRequest,
-            _ => StatusCodes.Status500InternalServerError
+            UnauthorizedAccessException =>
+                StatusCodes.Status401Unauthorized,
+
+            NotFoundException =>
+                StatusCodes.Status404NotFound,
+
+            BadRequestException =>
+                StatusCodes.Status400BadRequest,
+
+            ArgumentException =>
+                StatusCodes.Status400BadRequest,
+
+            _ =>
+                StatusCodes.Status500InternalServerError
         };
 
         response.StatusCode = statusCode;
@@ -46,12 +62,11 @@ namespace FinTasker.API.Middleware
         var result = new
         {
             success = false,
-            message = ex.Message,
-            statusCode = statusCode
+            message = exception.Message,
+            statusCode,
+            traceId = context.TraceIdentifier
         };
 
-        return response.WriteAsJsonAsync(result);
+        await response.WriteAsJsonAsync(result);
     }
 }
-}
-

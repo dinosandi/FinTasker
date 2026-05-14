@@ -1,12 +1,18 @@
-import axios, {
-    AxiosInstance,
-} from "axios";
+import axios, { AxiosInstance, AxiosError } from "axios"
 
-
-console.log("API Base URL:", import.meta.env.VITE_CLERK_PUBLISHABLE_KEY);
+console.log("API URL:", import.meta.env.VITE_API_URL)
 export const api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+  baseURL: import.meta.env.VITE_API_URL, 
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // untuk implementasi cookie
+})
+
+// Interceptor response untuk tangkap error global
+api.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    return Promise.reject(error)
+  }
+)

@@ -90,8 +90,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-console.log('Client ID:', import.meta.env.VITE_CLIENT_ID)
-
 // Render the app
 const rootElement = document.getElementById('root')!
 if (!rootElement.innerHTML) {
