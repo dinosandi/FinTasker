@@ -1,1 +1,2 @@
-![FinTasker Dashboard](./Assets/LogoBg.png)
+FinTasker
+![FinTasker Logo](./Dashboard-Admin/public/images/LogoBg.png)
