@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using FinTasker.Application.Common.Models;
-using FinTasker.Application.Features.Projects.Commands.Command;
+using FinTasker.Application.Features.Projects.Commands.CreateProject;
 using Microsoft.AspNetCore.Authorization;
+using FinTasker.Application.Features.Projects.Commands.UpdateProject;
+using FinTasker.Application.Features.Projects.DTOs;
 
 
 namespace FinTasker.API.Controller
@@ -29,6 +31,27 @@ namespace FinTasker.API.Controller
                 return BadRequest(result);
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult<ApiResponse<ProjectDto>>> UpdateProject(
+            [FromRoute] Guid id,
+            [FromBody] UpdateProjectRequest request)   
+        {
+            var command = new UpdateProjectCommand(
+                id,
+                request.Name,
+                request.Description,
+                request.Status,
+                request.Color,
+                request.StartDate,
+                request.EndDate
+            );
+
+            var result = await _mediator.Send(command);
+
+            return result.Success ? Ok(result) : BadRequest(result);
         }
     }
 }

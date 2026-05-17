@@ -7,7 +7,7 @@ namespace FinTasker.Application.Common.Interfaces.Repository
     {
       
         Task CreateProjectsAsync(Projects project);
-        // Task<Projects> GetProjectByIdAsync(Guid projectId);
+        Task<Projects> GetProjectByIdAsync(Guid projectId);
         // Task<IEnumerable<Projects>> GetAllProjectsAsync();
         // Task UpdateProjectAsync(Projects project);
         // Task DeleteProjectAsync(Guid projectId);
