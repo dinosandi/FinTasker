@@ -12,6 +12,10 @@ using FinTasker.Infrastructure.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using FinTasker.Application.Common.Behaviours;
+using FluentValidation;
+using FinTasker.API.Middleware;
+using FinTasker.Application;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -126,7 +130,14 @@ builder.Services.AddScoped<IAppDbContext>(provider =>
 
 //  MEDIATR
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(Assembly.Load("FinTasker.Application")));
+{
+    cfg.RegisterServicesFromAssembly(Assembly.Load("FinTasker.Application"));  
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+});
+
+builder.Services.AddValidatorsFromAssembly(
+    typeof(ApplicationAssemblyMarker).Assembly);
+
 
 
 //  SERVICES
@@ -148,6 +159,8 @@ builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ITasksService, TasksService>();
 
 var app = builder.Build();
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 
 //  MIDDLEWARE

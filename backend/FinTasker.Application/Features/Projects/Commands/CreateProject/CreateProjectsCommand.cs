@@ -3,7 +3,7 @@ using MediatR;
 using FinTasker.Domain.Enums;
 using FinTasker.Application.Common.Models;
 
-namespace FinTasker.Application.Features.Projects.Commands.Command
+namespace FinTasker.Application.Features.Projects.Commands.CreateProject
 {
     public class CreateProjectsCommand 
     : IRequest<ApiResponse<CreateProjectsResponse>>

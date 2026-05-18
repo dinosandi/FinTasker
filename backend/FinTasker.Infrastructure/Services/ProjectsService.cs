@@ -1,48 +1,39 @@
 using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using FinTasker.Infrastructure.Persistence;
+using FinTasker.Application.Common.Interfaces.Repository;
 
 
 namespace FinTasker.Infrastructure.Services
 {
     public class ProjectsService : IProjectsService
     {
-        private readonly AppDbContext _context;
+        private readonly IProjectsRepository _repository; // Menggunakan repository untuk operasi database
 
-        public ProjectsService(AppDbContext context) // Dependency Injection untuk mendapatkan instance AppDbContext
+        public ProjectsService(IProjectsRepository repository) // Dependency Injection untuk mendapatkan instance repository
         {
-            _context = context;
+            _repository = repository;
         }
 
         public async Task CreateProjectsAsync(Projects project)
         {
-            await _context.Projects.AddAsync(project);
-            await _context.SaveChangesAsync();
+            await _repository.CreateProjectsAsync(project);
         }
-        public async Task<Projects> GetProjectsByIdAsync(Guid projectId)
-        {
-            return await _context.Projects
-            .AsNoTracking() // Menambahkan AsNoTracking untuk meningkatkan performa saat hanya membaca data
-            .FirstOrDefaultAsync(p => p.Id == projectId);
-        }
-        
 
         // public async Task UpdateProjectAsync(Projects project)
         // {
-        //     _context.Projects.Update(project);
-        //     await _context.SaveChangesAsync();
+        //     await _repository.UpdateProjectAsync(project);
         // }
 
         // public async Task DeleteProjectAsync(Projects project)
         // {
-        //     _context.Projects.Remove(project);
-        //     await _context.SaveChangesAsync();
+        //     await _repository.DeleteProjectAsync(project);
         // }
-        //     public async Task SaveChangesAsync()
-        //     {
-        //         await _context.SaveChangesAsync();
-        //     }
+
+        public async Task<Projects> GetProjectsByIdAsync(Guid projectId)
+        {
+            return await _repository.GetProjectByIdAsync(projectId);
+        }
+
     }
 }
 

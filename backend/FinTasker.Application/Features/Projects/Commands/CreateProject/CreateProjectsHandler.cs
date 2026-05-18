@@ -1,21 +1,21 @@
 using MediatR;
 using FinTasker.Application.Common.Models;
-using FinTasker.Application.Features.Projects.Commands.Command;
+using FinTasker.Application.Common.Interfaces.Repository;
 using FinTasker.Application.Common.Interfaces.Service;
 
-namespace FinTasker.Application.Features.Projects.Commands.Handler
+namespace FinTasker.Application.Features.Projects.Commands.CreateProject
 {
     public class CreateProjectsHandler
         : IRequestHandler<CreateProjectsCommand, ApiResponse<CreateProjectsResponse>>
     {
-        private readonly IProjectsService _projectsService;
+        private readonly IProjectsRepository _projectRepository;
         private readonly ICurrentUserService _currentUserService;
 
         public CreateProjectsHandler(
-            IProjectsService projectsService,
+            IProjectsRepository projectsRepository,
             ICurrentUserService currentUserService)
         {
-            _projectsService = projectsService;
+            _projectRepository = projectsRepository;
             _currentUserService = currentUserService;
         }
 
@@ -46,7 +46,7 @@ namespace FinTasker.Application.Features.Projects.Commands.Handler
             };
 
             // Save
-            await _projectsService.CreateProjectsAsync(newProjects);
+            await _projectRepository.CreateProjectsAsync(newProjects);
 
             // Response
             var response = new CreateProjectsResponse

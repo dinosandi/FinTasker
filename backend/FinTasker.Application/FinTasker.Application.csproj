@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Google.Apis.Auth" Version="1.74.0" />
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
@@ -15,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common\Behaviours\" />
     <Folder Include="Common\Exceptions\" />
     <Folder Include="Common\Models\" />
     <Folder Include="Features\Auth\Commands\LoginManualWithEmail\" />
@@ -22,15 +24,13 @@
     <Folder Include="Features\Auth\Commands\RefreshToken\" />
     <Folder Include="Features\Auth\Queries\" />
     <Folder Include="Features\Auth\Queries\GetCurrentUser\" />
-    <Folder Include="Features\Projects\" />
-    <Folder Include="Features\Projects\Commands\" />
-    <Folder Include="Features\Projects\Commands\Command\" />
-    <Folder Include="Features\Projects\Commands\Handler\" />
-    <Folder Include="Features\Projects\Queries\" />
+    <Folder Include="Features\Projects\DTOs\" />
     <Folder Include="Features\Tasks\" />
     <Folder Include="Features\Tasks\Commands\" />
     <Folder Include="Features\Tasks\Commands\Command\" />
     <Folder Include="Features\Tasks\Commands\Handler\" />
+    <Folder Include="Features\Tasks\DTOs\" />
+    <Folder Include="Features\Tasks\Queries\" />
     <Folder Include="Users\" />
     <Folder Include="Users\Command\" />
     <Folder Include="Users\Command\Login\" />

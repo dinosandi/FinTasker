@@ -1,5 +1,6 @@
 using System.Net;
 using FinTasker.Application.Common.Exceptions;
+using FluentValidation;
 
 namespace FinTasker.API.Middleware;
 
@@ -38,6 +39,24 @@ public class GlobalExceptionMiddleware
         var response = context.Response;
 
         response.ContentType = "application/json";
+
+
+        // ValidationException harus dicek SEBELUM Exception umum
+        if (exception is ValidationException validationEx)
+        {
+            response.StatusCode = StatusCodes.Status400BadRequest;
+
+            await response.WriteAsJsonAsync(new
+            {
+                success    = false,
+                message    = "Validation failed.",
+                errors     = validationEx.Errors.Select(e => e.ErrorMessage).ToList(),
+                statusCode = StatusCodes.Status400BadRequest,
+                traceId
+            });
+
+            return;
+        }
 
         var statusCode = exception switch
         {
