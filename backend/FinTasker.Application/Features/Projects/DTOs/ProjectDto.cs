@@ -1,4 +1,4 @@
-using System;
+using FinTasker.Application.Features.Tasks.DTOs;
 using FinTasker.Domain.Enums;
 
 namespace FinTasker.Application.Features.Projects.DTOs
@@ -16,6 +16,7 @@ namespace FinTasker.Application.Features.Projects.DTOs
         public DateTimeOffset? EndDate { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
+        public List<TaskDto> Tasks { get; init; } = [];
 
     }
 }
