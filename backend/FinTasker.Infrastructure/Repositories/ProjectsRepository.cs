@@ -16,41 +16,29 @@ namespace FinTasker.Infrastructure.Repositories // Implementasi repository untuk
         public IQueryable<Projects> GetQueryable()
             => _context.Projects.AsQueryable();
 
-        public async Task<IEnumerable<Projects>> GetAllProjectsAsync()
-        {
-            return await _context.Projects
+        public async Task<Projects?> GetProjectByIdAsync(Guid projectId, CancellationToken ct = default)
+        => await _context.Projects
             .AsNoTracking()
-            .ToListAsync();
-        }
+            .FirstOrDefaultAsync(p => p.Id == projectId, ct);
 
-        public async Task<Projects> GetProjectByIdAsync(Guid projectId)
+        public async Task CreateProjectAsync(Projects project, CancellationToken ct = default)
         {
-            return await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == projectId);
+            await _context.Projects.AddAsync(project, ct);
+            await _context.SaveChangesAsync(ct);  // SaveChanges di dalam repository
         }
 
-        public async Task CreateProjectsAsync(Projects project)
-        {
-            await _context.Projects.AddAsync(project);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateProjectAsync(Projects project)
+        public async Task UpdateProjectAsync(Projects project, CancellationToken ct = default)
         {
             _context.Projects.Update(project);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
         }
 
-        public async Task DeleteProjectAsync(Projects project)
+        public async Task DeleteProjectAsync(Projects project, CancellationToken ct = default)
         {
             _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
         }
 
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
 
     }
 }

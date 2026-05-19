@@ -48,7 +48,8 @@ public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, ApiRes
         project.EndDate = request.EndDate;
         project.UpdatedAt = DateTimeOffset.UtcNow;
 
-        await _projectRepository.SaveChangesAsync();
+        await _projectRepository.UpdateProjectAsync(project, cancellationToken);
+
 
         var dto = new ProjectDto
         {
@@ -69,6 +70,6 @@ public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, ApiRes
             Data = dto
         };
 
-        
+
     }
 }

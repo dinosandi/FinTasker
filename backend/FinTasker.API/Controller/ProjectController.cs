@@ -7,6 +7,7 @@ using FinTasker.Application.Features.Projects.Commands.UpdateProject;
 using FinTasker.Application.Features.Projects.DTOs;
 using FinTasker.Application.Features.Projects.Commands.DeleteProject;
 using FinTasker.Application.Features.Projects.Queries.GetAllProjects;
+using FinTasker.Application.Features.Projects.Queries.GetByIdProject;
 
 namespace FinTasker.API.Controller
 {
@@ -69,11 +70,17 @@ namespace FinTasker.API.Controller
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PaginatedResult<ProjectDto>>>> GetAll(
-        [FromQuery] GetAllProjectQuery query,
-        CancellationToken ct)
+        public async Task<ActionResult<ApiResponse<List<ProjectDto>>>> GetAllProjects(CancellationToken ct)
         {
-            var result = await _mediator.Send(query, ct);
+            var result = await _mediator.Send(new GetAllProjectQuery(), ct);
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
+        {
+            var result = await _mediator.Send(new GetByIdProjectQuery(id), ct);
             return Ok(result);
         }
     }

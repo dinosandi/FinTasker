@@ -4,7 +4,6 @@ using FinTasker.Application.Common.Models;
 using FinTasker.Application.Common.Interfaces.Repository;
 using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Application.Features.Projects.DTOs;
-using FinTasker.Application.Features.Tasks.DTOs;
 
 
 namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
@@ -34,7 +33,6 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
             // Mulai query dengan filter berdasarkan userId
             var query = _projectsRepository
                 .GetQueryable()
-                .Include(p => p.Tasks) // Include tasks
                 .Where(p => p.UsersId == userId);
 
             // kondisi pencarian
@@ -80,18 +78,6 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
                     EndDate = p.EndDate,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
-                    Tasks = p.Tasks.Select(t => new TaskDto
-                    {
-                        Title = t.Title,
-                        Description = t.Description,
-                        Status = t.Status,
-                        Priority = t.Priority,
-                        DueDate = t.DueDate,
-                        Estimed_Minutes = t.Estimed_Minutes,
-                        CompletedAt = t.CompletedAt
-
-
-                    }).ToList()
                 })
                 .ToListAsync(cancellationToken);
 

@@ -25,6 +25,7 @@
     <Folder Include="Features\Auth\Queries\" />
     <Folder Include="Features\Auth\Queries\GetCurrentUser\" />
     <Folder Include="Features\Projects\DTOs\" />
+    <Folder Include="Features\Projects\Queries\GetByIdProject\" />
     <Folder Include="Features\Tasks\" />
     <Folder Include="Features\Tasks\Commands\" />
     <Folder Include="Features\Tasks\Commands\Command\" />

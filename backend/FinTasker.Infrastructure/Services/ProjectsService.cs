@@ -16,7 +16,7 @@ namespace FinTasker.Infrastructure.Services
 
         public async Task CreateProjectsAsync(Projects project)
         {
-            await _repository.CreateProjectsAsync(project);
+            await _repository.CreateProjectAsync(project);
         }
 
         // public async Task UpdateProjectAsync(Projects project)
