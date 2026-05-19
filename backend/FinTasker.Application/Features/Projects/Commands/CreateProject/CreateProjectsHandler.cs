@@ -21,7 +21,7 @@ namespace FinTasker.Application.Features.Projects.Commands.CreateProject
 
         public async Task<ApiResponse<CreateProjectsResponse>> Handle(
             CreateProjectsCommand request,
-            CancellationToken cancellationToken)
+            CancellationToken ct) // ct di parameter ini digunakan untuk membatalkan operasi jika diperlukan, misalnya jika permintaan dibatalkan oleh klien atau jika operasi memakan waktu terlalu lama.
         {
             // Validasi login
             var userId = _currentUserService.UserId
@@ -46,7 +46,8 @@ namespace FinTasker.Application.Features.Projects.Commands.CreateProject
             };
 
             // Save
-            await _projectRepository.CreateProjectsAsync(newProjects);
+            await _projectRepository.CreateProjectAsync(newProjects, ct);
+            
 
             // Response
             var response = new CreateProjectsResponse
