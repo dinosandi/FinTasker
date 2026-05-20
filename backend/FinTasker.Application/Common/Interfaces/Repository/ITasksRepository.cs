@@ -5,12 +5,13 @@ namespace FinTasker.Application.Common.Interfaces.Repository
 {
     public interface ITasksRepository
     {
-        Task CreateTasksAsync(Tasks task);
-        // Task<Tasks> GetTaskByIdAsync(Guid taskId);
+        // untuk query flexible (pagination, filter, sort) — tidak perlu GetAllTasksAsync
+        // IQueryable<Tasks> GetQueryable();
+        Task CreateTasksAsync(Tasks tasks,CancellationToken ct = default);
+        Task<Tasks> GetTaskByIdAsync (Guid Id,CancellationToken ct = default);
         // Task<IEnumerable<Tasks>> GetAllTasksAsync();
         // Task UpdateTaskAsync(Tasks task);
-        // Task DeleteTaskAsync(Guid taskId);
-        Task SaveChangesAsync();
+        Task DeleteTaskAsync(Tasks task,CancellationToken ct = default);
     }
 
 }

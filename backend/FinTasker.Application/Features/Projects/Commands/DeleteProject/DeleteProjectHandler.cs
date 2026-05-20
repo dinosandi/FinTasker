@@ -1,4 +1,3 @@
-using System;
 using MediatR;
 using FinTasker.Application.Common.Exceptions;
 using FinTasker.Application.Common.Interfaces.Repository;

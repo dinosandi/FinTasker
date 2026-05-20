@@ -5,7 +5,7 @@ namespace FinTasker.Application.Common.Interfaces.Service
 {
     public interface ITasksService
     {
-        Task CreateTasksAsync(Tasks Tasks);
+        // Task CreateTasksAsync(Tasks Tasks);
         // Task<Tasks> GetTasksByIdAsync(Guid TasksId); // mengambil data Tasks berdasarkan ID
 
         // Task UpdateTasksAsync(Tasks Tasks); // memperbarui data Tasks yang sudah ada

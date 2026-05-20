@@ -13,11 +13,23 @@ namespace FinTasker.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task CreateTasksAsync(Tasks task)
+        public async Task CreateTasksAsync(Tasks tasks, CancellationToken ct = default)
         {
-            await _context.Tasks.AddAsync(task);
-            await _context.SaveChangesAsync();
+            await _context.Tasks.AddAsync(tasks, ct);
+            await _context.SaveChangesAsync(ct);
         }
+
+        public async Task<Tasks> GetTaskByIdAsync(Guid Id, CancellationToken ct = default)
+        => await _context.Tasks
+        .AsNoTracking()
+        .FirstOrDefaultAsync(t => t.Id == Id, ct);
+        
+        public async Task DeleteTaskAsync(Tasks task, CancellationToken ct = default)
+        {
+            _context.Tasks.Remove(task);
+            await _context.SaveChangesAsync(ct);
+        }
+        
 
         // public async Task UpdateTaskAsync(Tasks task)
         // {
@@ -30,9 +42,6 @@ namespace FinTasker.Infrastructure.Repositories
         //     _context.Tasks.Remove(task);
         //     await _context.SaveChangesAsync();
         // }
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
+
     }
 }

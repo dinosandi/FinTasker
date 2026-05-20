@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using FinTasker.Application.Common.Models;
-using FinTasker.Application.Features.Tasks.Commands.Command;
+using FinTasker.Application.Features.Tasks.Commands.CreateTasks;
 using Microsoft.AspNetCore.Authorization;
+using FinTasker.Application.Features.Tasks.DTOs;
+using FinTasker.Application.Features.Tasks.Commands.DeleteTasks;
 
 
 namespace FinTasker.API.Controller
@@ -21,7 +23,7 @@ namespace FinTasker.API.Controller
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<ApiResponse<CreateTasksResponse>>> CreateTask(
+        public async Task<ActionResult<ApiResponse<TaskDto>>> CreateTask(
             [FromBody] CreateTasksCommand command)
         {
             var result = await _mediator.Send(command);
@@ -30,6 +32,18 @@ namespace FinTasker.API.Controller
                 return BadRequest(result);
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult<ApiResponse<string>>> DeleteTask(
+            [FromRoute] Guid id)
+        {
+            var command = new DeleteTasksCommand(id);
+
+            var result = await _mediator.Send(command);
+
+            return result.Success ? Ok(result) : BadRequest(result);
         }
     }
 }
