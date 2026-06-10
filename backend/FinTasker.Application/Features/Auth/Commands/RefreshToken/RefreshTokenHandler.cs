@@ -1,40 +1,55 @@
 using MediatR;
-using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Application.Common.Models;
-using FinTasker.Application.Common.Exceptions;
+using FinTasker.Application.Features.Auth.Commands.RefreshToken;
+using FinTasker.Application.Common.Interfaces.Service;
 
 namespace FinTasker.Application.Features.Auth.Commands.RefreshToken
 {
     public class RefreshTokenHandler : IRequestHandler<RefreshTokenCommand, AuthResponse>
     {
+        private readonly ICookieService       _cookieService;
         private readonly IRefreshTokenService _refreshTokenService;
-        private readonly IJwtService _jwtService;
+        private readonly IJwtService          _jwtService;
 
-        public RefreshTokenHandler(IRefreshTokenService refreshTokenService, IJwtService jwtService)
+        public RefreshTokenHandler(
+            ICookieService cookieService,
+            IRefreshTokenService refreshTokenService,
+            IJwtService jwtService)
         {
+            _cookieService       = cookieService;
             _refreshTokenService = refreshTokenService;
-            _jwtService = jwtService;
+            _jwtService          = jwtService;
         }
 
-        public async Task<AuthResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        public async Task<AuthResponse> Handle(
+            RefreshTokenCommand request,
+            CancellationToken cancellationToken)
         {
-            // Validasi refresh token dari database
-            var existingToken = await _refreshTokenService.GetValidTokenAsync(request.Token);
+            // 1. Ambil refresh token dari cookie
+            var token = _cookieService.GetRefreshToken()
+                ?? throw new UnauthorizedAccessException("Refresh token tidak ditemukan.");
 
-            if (existingToken == null)
-                throw new BadRequestException("Refresh token tidak valid atau sudah expired.");
+            // 2. Validasi token di database
+            var refreshToken = await _refreshTokenService.GetValidTokenAsync(token)
+                ?? throw new UnauthorizedAccessException("Refresh token tidak valid atau sudah expired.");
 
-            // Revoke token lama (rotation — satu token hanya bisa dipakai sekali)
-            await _refreshTokenService.RevokeTokenAsync(request.Token);
+            // 3. Rotate: revoke yang lama, buat yang baru (best practice)
+            await _refreshTokenService.RevokeTokenAsync(token);
+            var newRefreshToken = await _refreshTokenService
+                .GenerateRefreshTokenAsync(refreshToken.UsersId);
 
-            // Generate token baru
-            var newAccessToken = _jwtService.GenerateToken(existingToken.Users);
-            var newRefreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(existingToken.UsersId);
+            // 4. Generate access token baru
+            var newAccessToken = _jwtService.GenerateToken(refreshToken.Users);
+
+            // 5. Set cookie baru
+            _cookieService.SetAccessTokenCookie(newAccessToken);
+            _cookieService.SetRefreshTokenCookie(newRefreshToken.Token);
 
             return new AuthResponse
             {
-                AccessToken = newAccessToken,
-                RefreshToken = newRefreshToken.Token
+                UserId = refreshToken.UsersId,
+                Email  = refreshToken.Users.Email,
+                Name   = refreshToken.Users.Name
             };
         }
     }

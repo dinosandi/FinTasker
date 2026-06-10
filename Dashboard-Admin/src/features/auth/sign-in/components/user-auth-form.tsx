@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
-import { IconFacebook, IconGmail } from '@/assets/brand-icons'
 import { useAuthStore } from '@/stores/auth-store'
 import {  cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -154,7 +153,7 @@ export function UserAuthForm({
           </div>
         </div>
 
-        <div className='grid grid-cols-2 gap-2'>
+        <div className='grid grid-cols-1 gap-2'>
           {/* <Button variant='outline' type='button' disabled={isLoading}>
             <IconGmail className='h-4 w-4' /> Google
           </Button>
@@ -166,7 +165,6 @@ export function UserAuthForm({
             onSuccess={(credentialResponse) => {
               console.log(credentialResponse);
 
-              // handle untuk mengirim token ke backend untuk verifikasi dan login
               
               
             }}

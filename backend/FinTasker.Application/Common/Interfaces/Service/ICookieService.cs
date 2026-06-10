@@ -1,14 +1,13 @@
-using System;
-using Microsoft.AspNetCore.Http;
 
 namespace FinTasker.Application.Common.Interfaces.Service
 {
-    public interface ICookieService
+public interface ICookieService
     {
-        void SetAuthCookies(HttpResponse response, string accessToken, string refreshToken);
-        void ClearAuthCookies(HttpResponse response);
-        string? GetRefreshTokenFromCookie(HttpRequest request);
+        void SetAccessTokenCookie(string token);
+        void SetRefreshTokenCookie(string token);
+        void ClearAuthCookies();
+        string? GetAccessToken();
+        string? GetRefreshToken();
     }
-
 }
 

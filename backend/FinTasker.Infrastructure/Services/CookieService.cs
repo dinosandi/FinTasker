@@ -1,68 +1,101 @@
-using System;
-using Microsoft.AspNetCore.Http;
 using FinTasker.Application.Common.Interfaces.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace FinTasker.Infrastructure.Services
 {
     public class CookieService : ICookieService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
 
-        // Nama cookie
-        private const string AccessTokenCookie = "access_token";
-        private const string RefreshTokenCookie = "refresh_token";
+        private const string AccessTokenKey  = "access_token";
+        private const string RefreshTokenKey = "refresh_token";
 
-        public CookieService(IConfiguration config)
+        public CookieService(
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration config)
         {
-            _config = config;
+            _httpContextAccessor = httpContextAccessor;
+            _config              = config;
         }
 
-        public void SetAuthCookies(HttpResponse response, string accessToken, string refreshToken)
+        private HttpContext HttpContext =>
+            _httpContextAccessor.HttpContext
+            ?? throw new InvalidOperationException(
+                "CookieService tidak bisa digunakan di luar HTTP request context.");
+
+        // ── SET 
+
+        public void SetAccessTokenCookie(string token)
         {
-            var isProduction = !string.Equals(
-                _config["ASPNETCORE_ENVIRONMENT"], "Development",
-                StringComparison.OrdinalIgnoreCase
-            );
+            var expiryMinutes = int.Parse(
+                _config["Jwt:ExpiryMinutes"] ?? "15");
 
-            var accessTokenExpire = int.Parse(_config["Jwt:ExpireMinutes"] ?? "60");
-            var refreshTokenExpireDays = int.Parse(_config["Jwt:RefreshExpireDays"] ?? "7");
+            HttpContext.Response.Cookies.Append(
+                AccessTokenKey,
+                token,
+                BuildCookieOptions(
+                    DateTimeOffset.UtcNow.AddMinutes(expiryMinutes)));
+        }
 
-            // Cookie untuk Access Token (JWT)
-            var accessCookieOptions = new CookieOptions
-            {
-                HttpOnly = true,            
-                Secure = false,      // HTTPS only di production, false di development
-                SameSite = SameSiteMode.Lax, // Ubah ketika naik ke production menjadi Strict
-                Expires = DateTimeOffset.UtcNow.AddMinutes(accessTokenExpire),
-                Path = "/"
-            };
+        public void SetRefreshTokenCookie(string token)
+        {
+            var expiryDays = int.Parse(
+                _config["Jwt:RefreshExpireDays"] ?? "30");
 
-            // Cookie untuk Refresh Token — expiry lebih panjang
-            var refreshCookieOptions = new CookieOptions
+            // Path dibatasi ke /api/auth/refresh saja
+            // Browser tidak kirim cookie ini ke endpoint lain → minimize exposure
+            HttpContext.Response.Cookies.Append(
+                RefreshTokenKey,
+                token,
+                BuildCookieOptions(
+                    DateTimeOffset.UtcNow.AddDays(expiryDays),
+                    path: "/api/auth/refresh"));
+        }
+
+        // ── GET 
+
+        public string? GetAccessToken()
+            => HttpContext.Request.Cookies[AccessTokenKey];
+
+        public string? GetRefreshToken()
+            => HttpContext.Request.Cookies[RefreshTokenKey];
+
+        // ── CLEAR 
+
+        public void ClearAuthCookies()
+        {
+            // Expires masa lalu → browser hapus cookie secara otomatis
+            HttpContext.Response.Cookies.Append(
+                AccessTokenKey, "",
+                BuildCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
+
+            HttpContext.Response.Cookies.Append(
+                RefreshTokenKey, "",
+                BuildCookieOptions(
+                    DateTimeOffset.UtcNow.AddDays(-1),
+                    path: "/api/auth/refresh"));
+        }
+
+        // ── PRIVATE HELPER
+
+        private bool IsProduction =>
+            _config["ASPNETCORE_ENVIRONMENT"] == "Production";
+
+        private CookieOptions BuildCookieOptions(
+            DateTimeOffset expires,
+            string path = "/")
+        {
+            return new CookieOptions
             {
                 HttpOnly = true,
-                Secure = isProduction,
-                SameSite = SameSiteMode.Lax,
-                Expires = DateTimeOffset.UtcNow.AddDays(refreshTokenExpireDays),
-                Path = "/api/Auth"    // Membatasi path — hanya dikirim ke endpoint auth
+                // Secure=true di Production (HTTPS), false di Development (HTTP local)
+                Secure   = IsProduction,
+                SameSite = SameSiteMode.Strict,
+                Expires  = expires,
+                Path     = path
             };
-
-            response.Cookies.Append(AccessTokenCookie, accessToken, accessCookieOptions);
-            response.Cookies.Append(RefreshTokenCookie, refreshToken, refreshCookieOptions);
-        }
-
-        public void ClearAuthCookies(HttpResponse response)
-        {
-            response.Cookies.Delete(AccessTokenCookie, new CookieOptions { Path = "/" });
-            response.Cookies.Delete(RefreshTokenCookie, new CookieOptions { Path = "/api/auth" });
-        }
-
-        public string? GetRefreshTokenFromCookie(HttpRequest request)
-        {
-            return request.Cookies[RefreshTokenCookie];
         }
     }
 }
-
-

@@ -5,12 +5,10 @@ using MediatR;
 
 namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
 {
-    public class LoginManualCommand : IRequest<ApiResponse<AuthResponse>>
-    {
-        public string Email { get; set; }
-        public string? PasswordHash { get; set; }
-
-    }
-
+    public record LoginManualCommand(
+        string Email,
+        string Password
+    ) : IRequest<ApiResponse<AuthResponse>>;
 }
+
  
