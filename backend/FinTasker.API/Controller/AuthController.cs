@@ -7,6 +7,7 @@ using FinTasker.Application.Features.Auth.Queries.GetCurrentUser;
 using Microsoft.AspNetCore.Authorization;
 using FinTasker.Application.Features.Auth.Commands.RefreshToken;
 using FinTasker.Application.Features.Auth.Commands.Logout;
+using FinTasker.Application.Features.Auth.Commands.Register;
 
 namespace FinTasker.API.Controllers
 {
@@ -23,7 +24,7 @@ namespace FinTasker.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginManualCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);  
+            return Ok(result);
         }
 
         [HttpPost("refresh")]
@@ -51,6 +52,18 @@ namespace FinTasker.API.Controllers
 
         [HttpPost("google-login")]
         public async Task<ActionResult<ApiResponse<AuthResponse>>> LoginWithGoogle([FromBody] LoginWithGoogle command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        // Register
+        [HttpPost("register")]
+        public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterCommand command)
         {
             var result = await _mediator.Send(command);
 
