@@ -29,7 +29,7 @@ namespace FinTasker.Application.Features.Projects.Queries.GetByIdProject
 
             var project = await _projectsRepository
                 .GetQueryable()
-                .Include(p => p.Tasks)             // ← Include Tasks HANYA di GetById
+                .Include(p => p.Tasks)             
                 .FirstOrDefaultAsync(
                     p => p.Id == request.Id,
                     cancellationToken)
@@ -41,7 +41,7 @@ namespace FinTasker.Application.Features.Projects.Queries.GetByIdProject
             return new ApiResponse<ProjectDto>
             {
                 Success = true,
-                Message = "Project retrieved successfully.",
+                Message = "Project by ID successfully fetched.",
                 Data = new ProjectDto
                 {
                     Name = project.Name,

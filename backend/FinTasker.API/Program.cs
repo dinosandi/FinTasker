@@ -160,9 +160,6 @@ builder.Services.AddScoped<ITasksService, TasksService>();
 
 var app = builder.Build();
 
-app.UseMiddleware<GlobalExceptionMiddleware>();
-
-
 //  MIDDLEWARE
 if (app.Environment.IsDevelopment())
 {
@@ -170,9 +167,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<FinTasker.API.Middleware.GlobalExceptionMiddleware>();
-
 // app.UseHttpsRedirection(); // Nonaktifkan untuk development agar tidak perlu setup HTTPS
+app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseMiddleware<CookieToAuthorizationMiddleware>(); 
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();

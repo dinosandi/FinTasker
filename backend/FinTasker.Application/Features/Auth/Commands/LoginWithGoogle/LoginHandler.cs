@@ -77,11 +77,8 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginWithGoogle
 
                 var response = new AuthResponse
                 {
-                    AccessToken = token,
-                    RefreshToken = string.Empty, 
                     Email = user.Email,
-                    Name = user.Name,
-                    IsProfileCompleted = user.IsProfileCompleted
+                    Name = user.Name
                 };
 
                 return ApiResponse<AuthResponse>.SuccessResponse(response, "Login Google berhasil");

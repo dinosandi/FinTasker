@@ -1,59 +1,51 @@
-using FinTasker.Application.Common.Exceptions;
 using FinTasker.Application.Common.Interfaces.Service;
+using FinTasker.Application.Common.Models;
 using MediatR;
-using FinTasker.Application.Common.Models;  
-
 
 namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
 {
-    public class LoginManualHandler : IRequestHandler<LoginManualCommand, ApiResponse<AuthResponse>>
-    
+    public class LoginManualHandler
+        : IRequestHandler<LoginManualCommand, ApiResponse<AuthResponse>>
     {
-        private readonly IUserService _userService;
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthenticationService _authService;
+        private readonly ICookieService         _cookieService;
+        private readonly IRefreshTokenService   _refreshTokenService;
 
-        public LoginManualHandler(IUserService userService, IAuthenticationService authenticationService)
+        public LoginManualHandler(
+            IAuthenticationService authService,
+            ICookieService cookieService,
+            IRefreshTokenService refreshTokenService)
         {
-            _userService = userService;
-            _authenticationService = authenticationService;
+            _authService         = authService;
+            _cookieService       = cookieService;
+            _refreshTokenService = refreshTokenService;
         }
 
-        public async Task<ApiResponse<AuthResponse>> Handle(LoginManualCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<AuthResponse>> Handle(
+            LoginManualCommand request,
+            CancellationToken cancellationToken)
         {
-            var users = await _userService.GetUserByEmail(request.Email);
+            // 1. Dapat AuthResult (internal) — berisi AccessToken
+            AuthResult authResult = await _authService
+                .AuthenticateAsync(request.Email, request.Password);
 
-            //validasi jika user tidak ada di database atau tidak terdaftar dengan email tersebut
-            if (users == null)
+            // 2. Generate refresh token
+            var refreshToken = await _refreshTokenService
+                .GenerateRefreshTokenAsync(authResult.UserId);
+
+            // 3. Simpan ke HttpOnly cookie — tidak expose ke client
+            _cookieService.SetAccessTokenCookie(authResult.AccessToken);
+            _cookieService.SetRefreshTokenCookie(refreshToken.Token);
+
+            // 4. Map ke AuthResponse (client model) — tanpa token
+            var response = new AuthResponse
             {
-                throw new NotFoundException("User not found");
-            }
-
-            //validasi jika password yang dimasukkan tidak sesuai dengan password yang ada di database
-            if (!_authenticationService.VerifyPassword(request.PasswordHash, users.PasswordHash))
-            {
-                throw new UnauthorizedAccessException("Invalid email or password");
-            }
-
-            // generate token JWT
-            var token = _authenticationService.GenerateToken(users);
-
-
-            return new ApiResponse<AuthResponse>
-            {
-                Success = true,
-                Message = "Login successful",
-                Data = new AuthResponse
-                {
-                    Name = users.Name,
-                    Email = users.Email,
-                    IsProfileCompleted = users.IsProfileCompleted,
-                    AccessToken = token,
-                    RefreshToken = string.Empty
-
-                }
+                UserId = authResult.UserId,
+                Email  = authResult.Email,
+                Name   = authResult.Name
             };
+
+            return ApiResponse<AuthResponse>.SuccessResponse(response, "Login successful.");
         }
     }
-    
-
-    }
+}

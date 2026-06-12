@@ -60,7 +60,8 @@ public class GlobalExceptionMiddleware
 
         var statusCode = exception switch
         {
-            UnauthorizedAccessException =>
+            
+            UnauthorizedException =>
                 StatusCodes.Status401Unauthorized,
 
             NotFoundException =>
