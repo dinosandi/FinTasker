@@ -5,6 +5,7 @@ using FinTasker.Application.Features.Tasks.Commands.CreateTasks;
 using Microsoft.AspNetCore.Authorization;
 using FinTasker.Application.Features.Tasks.DTOs;
 using FinTasker.Application.Features.Tasks.Commands.DeleteTasks;
+using FinTasker.Application.Features.Tasks.Commands.UpdateTasks;
 
 
 namespace FinTasker.API.Controller
@@ -40,6 +41,24 @@ namespace FinTasker.API.Controller
             [FromRoute] Guid id)
         {
             var command = new DeleteTasksCommand(id);
+
+            var result = await _mediator.Send(command);
+
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
+
+        [Authorize]
+        [HttpPatch("{id:guid}")]
+        public async Task<ActionResult<ApiResponse<TaskDto>>> UpdateTask(
+            [FromRoute] Guid id,
+            [FromBody] UpdateTasksCommand command)
+        {
+            if (id != command.Id)
+                return BadRequest(new ApiResponse<TaskDto>
+                {
+                    Success = false,
+                    Message = "ID in the route does not match ID in the body."
+                });
 
             var result = await _mediator.Send(command);
 

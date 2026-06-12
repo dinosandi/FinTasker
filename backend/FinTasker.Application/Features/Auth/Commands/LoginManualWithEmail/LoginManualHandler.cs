@@ -45,7 +45,7 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
                 Name   = authResult.Name
             };
 
-            return ApiResponse<AuthResponse>.SuccessResponse(response, "Login berhasil.");
+            return ApiResponse<AuthResponse>.SuccessResponse(response, "Login successful.");
         }
     }
 }

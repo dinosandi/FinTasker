@@ -1,6 +1,5 @@
 using FinTasker.Domain.Enums;
 
-
 namespace FinTasker.Application.Features.Tasks.DTOs
 {
     public record TaskDto

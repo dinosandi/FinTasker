@@ -31,11 +31,11 @@ namespace FinTasker.Infrastructure.Repositories
         }
         
 
-        // public async Task UpdateTaskAsync(Tasks task)
-        // {
-        //     _context.Tasks.Update(task);
-        //     await _context.SaveChangesAsync();
-        // }
+        public async Task UpdateTaskAsync(Tasks task , CancellationToken ct = default)
+        {
+            _context.Tasks.Update(task);
+            await _context.SaveChangesAsync(ct);
+        }
 
         // public async Task DeleteTaskAsync(Tasks task)
         // {
