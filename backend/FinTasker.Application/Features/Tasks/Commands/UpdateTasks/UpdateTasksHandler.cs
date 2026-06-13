@@ -1,7 +1,6 @@
 using MediatR;
 using FinTasker.Application.Common.Models;
 using FinTasker.Application.Features.Tasks.DTOs;
-using FinTasker.Domain.Enums;
 using FinTasker.Application.Common.Exceptions;
 using FinTasker.Application.Common.Interfaces.Repository;
 using FinTasker.Application.Common.Interfaces.Service;

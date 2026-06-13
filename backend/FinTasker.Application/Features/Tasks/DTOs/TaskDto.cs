@@ -4,7 +4,8 @@ namespace FinTasker.Application.Features.Tasks.DTOs
 {
     public record TaskDto
     {
-        public Guid ProjectId { get; set; } // Relasi ke Projects
+        public Guid Id { get; set; } // Relasi ke Projects
+        public Guid ProjectId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public StatusTask Status { get; set; }

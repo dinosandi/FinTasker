@@ -33,6 +33,7 @@
     <Folder Include="Features\Tasks\Queries\" />
     <Folder Include="Features\Tasks\Queries\GetAllTasks\" />
     <Folder Include="Features\Tasks\Queries\GetByIdTasks\" />
+    <Folder Include="Features\Tasks\Queries\GetFilteredTasks\" />
     <Folder Include="Users\" />
     <Folder Include="Users\Command\" />
     <Folder Include="Users\Command\Login\" />

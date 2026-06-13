@@ -28,43 +28,44 @@ namespace FinTasker.Application.Features.Projects.Queries.GetByIdProject
                 ?? throw new UnauthorizedAccessException("User is not logged in.");
 
             var project = await _projectsRepository
-                .GetQueryable()
-                .Include(p => p.Tasks)             
-                .FirstOrDefaultAsync(
-                    p => p.Id == request.Id,
-                    cancellationToken)
-                    ?? throw new NotFoundException("Project not found.");
-
-            if (project.UsersId != userId)
-                throw new UnauthorizedAccessException("User does not have permission.");
-
-            return new ApiResponse<ProjectDto>
-            {
-                Success = true,
-                Message = "Project by ID successfully fetched.",
-                Data = new ProjectDto
-                {
-                    Name = project.Name,
-                    Description = project.Description,
-                    Status = project.Status,
-                    Color = project.Color,
-                    StartDate = project.StartDate,
-                    EndDate = project.EndDate,
-                    CreatedAt = project.CreatedAt,
-                    UpdatedAt = project.UpdatedAt,
-                    Tasks = project.Tasks.Select(t => new TaskDto
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(p =>
+                        p.Id == request.Id &&
+                        p.UsersId == userId)
+                    .Select(p => new ProjectDto
                     {
-                        Title = t.Title,
-                        Description = t.Description,
-                        Status = t.Status,
-                        Priority = t.Priority,
-                        DueDate = t.DueDate,
-                        CompletedAt = t.CompletedAt,
-                        Estimed_Minutes = t.Estimed_Minutes,
-                    }).ToList()
-                }
-            };
-            
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Status = p.Status,
+                        Color = p.Color,
+                        StartDate = p.StartDate,
+                        EndDate = p.EndDate,
+                        CreatedAt = p.CreatedAt,
+                        UpdatedAt = p.UpdatedAt,
+
+                        Tasks = p.Tasks.Select(t => new TaskDto
+                        {
+                            Id = t.Id,
+                            Title = t.Title,
+                            Description = t.Description,
+                            Status = t.Status,
+                            Priority = t.Priority,
+                            DueDate = t.DueDate,
+                            CompletedAt = t.CompletedAt,
+                            Estimed_Minutes = t.Estimed_Minutes
+                        }).ToList()
+                    })
+                    .FirstOrDefaultAsync(cancellationToken);
+            if (project is null)
+                throw new NotFoundException("Project not found.");
+
+            return ApiResponse<ProjectDto>.SuccessResponse(
+                project,
+                "Project retrieved successfully."
+            );
+
         }
     }
 }

@@ -12,6 +12,9 @@ namespace FinTasker.Infrastructure.Repositories
         {
             _context = context;
         }
+        
+        public IQueryable<Tasks> GetQueryable()
+        => _context.Tasks;
 
         public async Task CreateTasksAsync(Tasks tasks, CancellationToken ct = default)
         {

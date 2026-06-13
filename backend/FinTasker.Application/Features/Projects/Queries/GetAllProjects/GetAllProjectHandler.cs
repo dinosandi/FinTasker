@@ -9,7 +9,7 @@ using FinTasker.Application.Features.Projects.DTOs;
 namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
 {
     public class GetAllProjectHandler
-        : IRequestHandler<GetAllProjectQuery, ApiResponse<PaginatedResult<ProjectDto>>>
+        : IRequestHandler<GetAllProjectQuery, ApiResponse<List<ProjectDto>>>
     {
         private readonly IProjectsRepository _projectsRepository;
         private readonly ICurrentUserService _currentUserService;
@@ -22,7 +22,7 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
             _currentUserService = currentUserService;
         }
 
-        public async Task<ApiResponse<PaginatedResult<ProjectDto>>> Handle(
+        public async Task<ApiResponse<List<ProjectDto>>> Handle(
             GetAllProjectQuery request,
             CancellationToken cancellationToken)
         {
@@ -80,22 +80,23 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
                     UpdatedAt = p.UpdatedAt,
                 })
                 .ToListAsync(cancellationToken);
-
-            return new ApiResponse<PaginatedResult<ProjectDto>>
+            var meta = new PaginationMeta
             {
-                Success = true,
-                Message = "Projects retrieved successfully.",
-                Data = new PaginatedResult<ProjectDto>
-                {
-                    Items = items,
-                    TotalCount = totalCount,
-                    Page = request.Page,
-                    PageSize = request.PageSize
-                }
+                Page = request.Page,
+                PageSize = request.PageSize,
+                TotalCount = totalCount,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize),
+                HasNextPage =
+        request.Page * request.PageSize < totalCount,
+                HasPreviousPage = request.Page > 1
             };
+
+            return ApiResponse<List<ProjectDto>>
+            .SuccessResponse(
+                items,
+                meta,
+                "Projects successfully fetched.");
         }
     }
-
-
 }
 
