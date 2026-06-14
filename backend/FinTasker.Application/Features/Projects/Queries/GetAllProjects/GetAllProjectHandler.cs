@@ -4,6 +4,7 @@ using FinTasker.Application.Common.Models;
 using FinTasker.Application.Common.Interfaces.Repository;
 using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Application.Features.Projects.DTOs;
+using FinTasker.Application.Common.Extensions;
 
 
 namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
@@ -64,38 +65,23 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
 
             var totalCount = await query.CountAsync(cancellationToken);  // ← nama konsisten
 
-            var items = await query
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
+            var result = await query
                 .Select(p => new ProjectDto
                 {
                     Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
-                    Status = p.Status,
-                    Color = p.Color,
+                    Status = p.Status.ToString(),
                     StartDate = p.StartDate,
                     EndDate = p.EndDate,
+                    Color = p.Color,
                     CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt,
+                    UpdatedAt = p.UpdatedAt                    
+                    
                 })
-                .ToListAsync(cancellationToken);
-            var meta = new PaginationMeta
-            {
-                Page = request.Page,
-                PageSize = request.PageSize,
-                TotalCount = totalCount,
-                TotalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize),
-                HasNextPage =
-        request.Page * request.PageSize < totalCount,
-                HasPreviousPage = request.Page > 1
-            };
+                .ToPaginatedResultAsync(request, cancellationToken);  // ← pakai overload PaginationQuery
 
-            return ApiResponse<List<ProjectDto>>
-            .SuccessResponse(
-                items,
-                meta,
-                "Projects successfully fetched.");
+            return ApiResponse<List<ProjectDto>>.OkPaginated(result, "Projects successfully fetched.");
         }
     }
 }

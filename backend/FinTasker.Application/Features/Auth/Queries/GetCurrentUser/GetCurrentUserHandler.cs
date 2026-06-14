@@ -41,6 +41,6 @@ public class GetCurrentUserHandler
             user.AvatarUrl
         );
 
-        return ApiResponse<CurrentUserDto>.SuccessResponse(dto);
+        return ApiResponse<CurrentUserDto>.Ok(dto);
     }
 }

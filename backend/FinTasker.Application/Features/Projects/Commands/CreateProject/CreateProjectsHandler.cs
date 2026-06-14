@@ -54,12 +54,12 @@ namespace FinTasker.Application.Features.Projects.Commands.CreateProject
             {
                 Name = newProjects.Name,
                 Description = newProjects.Description,
-                Status = newProjects.Status,
+                Status = newProjects.Status.ToString(),
                 StartDate = newProjects.StartDate,
                 EndDate = newProjects.EndDate
             };
 
-            return ApiResponse<CreateProjectsResponse>.SuccessResponse(
+            return ApiResponse<CreateProjectsResponse>.Created(
                 response,
                 "Project created successfully"
             );

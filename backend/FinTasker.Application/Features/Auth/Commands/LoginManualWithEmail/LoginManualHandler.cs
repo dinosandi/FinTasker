@@ -40,12 +40,11 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
             // 4. Map ke AuthResponse (client model) — tanpa token
             var response = new AuthResponse
             {
-                UserId = authResult.UserId,
                 Email  = authResult.Email,
                 Name   = authResult.Name
             };
 
-            return ApiResponse<AuthResponse>.SuccessResponse(response, "Login successful.");
+            return ApiResponse<AuthResponse>.Ok(response, "Login successful.");
         }
     }
 }

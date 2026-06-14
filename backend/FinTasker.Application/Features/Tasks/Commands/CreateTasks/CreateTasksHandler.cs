@@ -76,7 +76,7 @@ namespace FinTasker.Application.Features.Tasks.Commands.CreateTasks
                 CompletedAt = newTasks.CompletedAt
             };
             
-            return ApiResponse<TaskDto>.SuccessResponse(
+            return ApiResponse<TaskDto>.Created(
                 response,
                 "Task created successfully"
             );

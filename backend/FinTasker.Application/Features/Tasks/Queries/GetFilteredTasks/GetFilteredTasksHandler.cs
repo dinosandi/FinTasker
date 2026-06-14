@@ -145,21 +145,8 @@ namespace FinTasker.Application.Features.Tasks.Queries.GetFilteredTasks
                 })
                 .ToListAsync(cancellationToken);
 
-            var meta = new PaginationMeta
-            {
-                Page = request.Page,
-                PageSize = request.PageSize,
-                TotalCount = totalCount,
-                TotalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize),
-                HasNextPage =
-                request.Page * request.PageSize < totalCount,
-                HasPreviousPage = request.Page > 1
-            };
-
-
-            return ApiResponse<List<TaskFilteredDto>>.SuccessResponse(
+            return ApiResponse<List<TaskFilteredDto>>.Ok(
                 items,
-                meta,
                 "Successfully get filtered tasks."
             );
         }

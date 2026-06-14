@@ -38,7 +38,7 @@ namespace FinTasker.Application.Features.Projects.Queries.GetByIdProject
                         Id = p.Id,
                         Name = p.Name,
                         Description = p.Description,
-                        Status = p.Status,
+                        Status = p.Status.ToString(),
                         Color = p.Color,
                         StartDate = p.StartDate,
                         EndDate = p.EndDate,
@@ -61,7 +61,7 @@ namespace FinTasker.Application.Features.Projects.Queries.GetByIdProject
             if (project is null)
                 throw new NotFoundException("Project not found.");
 
-            return ApiResponse<ProjectDto>.SuccessResponse(
+            return ApiResponse<ProjectDto>.Ok(
                 project,
                 "Project retrieved successfully."
             );
