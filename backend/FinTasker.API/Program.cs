@@ -157,6 +157,8 @@ builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ITasksService, TasksService>();
+builder.Services.AddScoped<ITaskActivitiesRepository, TaskActivitiesRepository>();
+builder.Services.AddScoped<ITaskActivityService, TaskActivityService>();
 
 var app = builder.Build();
 

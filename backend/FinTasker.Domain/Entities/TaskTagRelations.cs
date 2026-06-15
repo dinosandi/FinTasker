@@ -11,8 +11,7 @@ namespace FinTasker.Domain.Entities
 
         // Navigation properties
         public Tasks Tasks { get; set; }
-        public TaskTags Tag { get; set; }
-        
+        public TaskTags Tag { get; set; }    
         
     }
 }

@@ -4,6 +4,7 @@ using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Application.Features.Tasks.DTOs;
 using FinTasker.Application.Common.Interfaces.Repository;
 using FinTasker.Application.Common.Exceptions;
+using FinTasker.Domain.Enums;
 
 
 
@@ -16,12 +17,14 @@ namespace FinTasker.Application.Features.Tasks.Commands.CreateTasks
         private readonly ITasksRepository _tasksRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IProjectsService _projectsService;
+        private readonly ITaskActivityService _activityService;
 
-        public CreateTasksHandler(ITasksRepository tasksRepository, IProjectsService projectsService, ICurrentUserService currentUserService)
+        public CreateTasksHandler(ITasksRepository tasksRepository, IProjectsService projectsService, ICurrentUserService currentUserService, ITaskActivityService activityService)
         {
             _currentUserService = currentUserService;
             _tasksRepository = tasksRepository;
             _projectsService = projectsService;
+            _activityService = activityService;
         }
 
         public async Task<ApiResponse<TaskDto>> Handle(
@@ -47,7 +50,7 @@ namespace FinTasker.Application.Features.Tasks.Commands.CreateTasks
             // Mapping entity
             var newTasks = new Domain.Entities.Tasks
             {
-
+                Id = Guid.NewGuid(),    
                 ProjectId = request.ProjectId,
                 Title = request.Title,
                 Description = request.Description,
@@ -62,6 +65,13 @@ namespace FinTasker.Application.Features.Tasks.Commands.CreateTasks
 
             // Save
             await _tasksRepository.CreateTasksAsync(newTasks, cancellationToken);
+
+            // Log Activity setelah add task
+            await _activityService.LogAsync(
+                Id:       newTasks.Id,
+                activityType: ActivityType.Created,
+                description:  $"Task \"{newTasks.Title}\" was created.",
+                ct:           cancellationToken);
 
             // response
             var response = new TaskDto
