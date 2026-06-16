@@ -19,6 +19,7 @@
     <Folder Include="Common\Behaviours\" />
     <Folder Include="Common\Exceptions\" />
     <Folder Include="Common\Extensions\" />
+    <Folder Include="Common\Interfaces\Hubs\" />
     <Folder Include="Common\Models\" />
     <Folder Include="Features\Auth\Commands\LoginManualWithEmail\" />
     <Folder Include="Features\Auth\Commands\LoginWithGoogle\" />

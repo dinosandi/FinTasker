@@ -7,6 +7,7 @@ namespace FinTasker.Application.Common.Interfaces
     {
         DbSet<Users> Users { get; }
         DbSet<TaskActivities> TaskActivities  { get; }
+        DbSet<Notifications> Notifications { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

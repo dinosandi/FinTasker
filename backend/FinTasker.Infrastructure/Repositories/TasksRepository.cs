@@ -25,6 +25,7 @@ namespace FinTasker.Infrastructure.Repositories
         public async Task<Tasks> GetTaskByIdAsync(Guid Id, CancellationToken ct = default)
         => await _context.Tasks
         .AsNoTracking()
+        .Include(t => t.Project)
         .FirstOrDefaultAsync(t => t.Id == Id, ct);
         
         public async Task DeleteTaskAsync(Tasks task, CancellationToken ct = default)

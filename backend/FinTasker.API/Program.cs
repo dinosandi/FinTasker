@@ -16,6 +16,8 @@ using FinTasker.Application.Common.Behaviours;
 using FluentValidation;
 using FinTasker.API.Middleware;
 using FinTasker.Application;
+using FinTasker.API.Hubs;
+using FinTasker.Application.Common.Interfaces.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -138,6 +140,8 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddValidatorsFromAssembly(
     typeof(ApplicationAssemblyMarker).Assembly);
 
+// websocket
+builder.Services.AddSignalR();
 
 
 //  SERVICES
@@ -154,6 +158,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IProjectsService, ProjectsService>();
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
+
+builder.Services.AddScoped<INotificationHubClient, NotificationHubClient>();
+
+builder.Services.AddScoped<INotificationsRepository, NotificationsRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ITasksService, TasksService>();
@@ -176,6 +185,8 @@ app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<NotificationHub>("/hubs/notifications");
+
 
 app.MapControllers();
 
