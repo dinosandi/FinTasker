@@ -76,11 +76,12 @@ namespace FinTasker.Application.Features.Tasks.Commands.CreateTasks
             // response
             var response = new TaskDto
             {
+                Id = newTasks.Id,
                 ProjectId = newTasks.ProjectId,
                 Title = newTasks.Title,
                 Description = newTasks.Description,
-                Priority = newTasks.Priority,
-                Status = newTasks.Status,
+                Priority = newTasks.Priority.ToString(),
+                Status = newTasks.Status.ToString(),
                 DueDate = newTasks.DueDate,
                 Estimed_Minutes = newTasks.Estimed_Minutes,
                 CompletedAt = newTasks.CompletedAt

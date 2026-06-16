@@ -41,8 +41,6 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
                 query = query.Where(p =>
                     p.Name.Contains(request.Search) ||
                     p.Description.Contains(request.Search));
-
-
             // filter status
             if (request.Status.HasValue)
                 query = query.Where(p => p.Status == request.Status.Value);

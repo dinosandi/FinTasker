@@ -8,6 +8,7 @@ using FinTasker.Application.Features.Tasks.Commands.DeleteTasks;
 using FinTasker.Application.Features.Tasks.Commands.UpdateTasks;
 using FinTasker.Domain.Enums;
 using FinTasker.Application.Features.Tasks.Queries.GetFilteredTasks;
+using FinTasker.Application.Features.Tasks.Commands.UpdateTasksStatus;
 
 
 namespace FinTasker.API.Controller
@@ -97,5 +98,24 @@ namespace FinTasker.API.Controller
 
             return result.Success ? Ok(result) : BadRequest(result);
         }
+
+        [Authorize]
+        [HttpPatch("{id:guid}/status")]
+        public async Task<ActionResult<ApiResponse<TaskDto>>> UpdateTask(
+            [FromRoute] Guid id,
+            [FromBody] UpdateTasksStatusCommand command
+        )
+        {
+            if (id != command.Id)
+                return BadRequest(new ApiResponse<TaskDto>
+                {
+                    Success = false,
+                    Message = "ID in the route does not match ID in the body"
+                });
+            var result = await _mediator.Send(command);
+
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
+        
     }
 }

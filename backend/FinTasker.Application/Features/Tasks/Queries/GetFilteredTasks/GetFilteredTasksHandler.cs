@@ -68,10 +68,11 @@ namespace FinTasker.Application.Features.Tasks.Queries.GetFilteredTasks
                     ProjectName = t.Project.Name,
                     Title = t.Title,
                     Description = t.Description,
-                    Status = t.Status,
-                    Priority = t.Priority,
+                    Status = t.Status.ToString(),
+                    Priority = t.Priority.ToString(),
                     DueDate = t.DueDate,
                     EstimatedMinutes = t.Estimed_Minutes,
+                    CompletedAt = t.CompletedAt,
                     CreatedAt = t.CreatedAt,
                     UpdatedAt = t.UpdatedAt,
 

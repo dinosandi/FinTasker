@@ -5,8 +5,6 @@ using FinTasker.Application.Common.Exceptions;
 using FinTasker.Application.Common.Interfaces.Repository;
 using FinTasker.Application.Common.Interfaces.Service;
 
-
-
 namespace FinTasker.Application.Features.Tasks.Commands.UpdateTasks
 {
     public class UpdateTasksHandler : IRequestHandler<UpdateTasksCommand, ApiResponse<TaskDto>>
@@ -48,8 +46,8 @@ namespace FinTasker.Application.Features.Tasks.Commands.UpdateTasks
                 ProjectId = task.ProjectId,
                 Title = task.Title,
                 Description = task.Description,
-                Status = task.Status,
-                Priority = task.Priority,
+                Status = task.Status.ToString(),
+                Priority = task.Priority.ToString(),
                 DueDate = task.DueDate,
                 Estimed_Minutes = task.Estimed_Minutes
             };
@@ -59,7 +57,8 @@ namespace FinTasker.Application.Features.Tasks.Commands.UpdateTasks
                 Message = "Task successfully updated.",
                 Data = dto
             };
-        }  
+        }
     }
 
 }
+

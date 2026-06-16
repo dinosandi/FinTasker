@@ -50,8 +50,8 @@ namespace FinTasker.Application.Features.Projects.Queries.GetByIdProject
                             Id = t.Id,
                             Title = t.Title,
                             Description = t.Description,
-                            Status = t.Status,
-                            Priority = t.Priority,
+                            Status = t.Status.ToString(),
+                            Priority = t.Priority.ToString(),
                             DueDate = t.DueDate,
                             CompletedAt = t.CompletedAt,
                             Estimed_Minutes = t.Estimed_Minutes
@@ -63,7 +63,7 @@ namespace FinTasker.Application.Features.Projects.Queries.GetByIdProject
 
             return ApiResponse<ProjectDto>.Ok(
                 project,
-                "Project retrieved successfully."
+                "Project based on id successfully retrieved."
             );
 
         }

@@ -10,8 +10,8 @@ namespace FinTasker.Application.Features.Tasks.DTOs
         public string ProjectName { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public StatusTask Status { get; set; }
-        public TaskPriority Priority { get; set; }
+        public string Status { get; set; }
+        public string Priority { get; set; }
         public DateTimeOffset DueDate { get; set; }
         public DateTimeOffset? CompletedAt { get; set; }
         public int EstimatedMinutes { get; set; }
