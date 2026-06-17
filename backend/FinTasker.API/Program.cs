@@ -171,6 +171,15 @@ builder.Services.AddScoped<ITaskActivityService, TaskActivityService>();
 
 var app = builder.Build();
 
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups";
+    context.Response.Headers["Cross-Origin-Embedder-Policy"] = "unsafe-none";
+
+    await next();
+});
+
+
 //  MIDDLEWARE
 if (app.Environment.IsDevelopment())
 {
@@ -179,9 +188,9 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection(); // Nonaktifkan untuk development agar tidak perlu setup HTTPS
+app.UseCors("AllowFrontend");
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<CookieToAuthorizationMiddleware>(); 
-app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

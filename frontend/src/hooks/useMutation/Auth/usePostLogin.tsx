@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
 import { api } from "@/config/api"
-import { useAuthStore } from "@/stores/auth-store"
 
 
 interface LoginPayload {
@@ -20,10 +19,6 @@ export const usePostLogin = () => {
       api.post<ApiResponse<null>>("/auth/login", payload),
     onSuccess: async () => {
       await syncAuthContext()
-    },
-
-    onError: () => {
-      useAuthStore.getState().auth.reset()
     },
   })
 }

@@ -1,12 +1,10 @@
-import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
-import { useAuthStore } from '@/stores/auth-store'
-import {  cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -18,10 +16,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-
-import { GoogleLogin } from '@react-oauth/google';
-
-// Implementasi feature sign in form API 
+import { GoogleLogin } from '@react-oauth/google'
 import { usePostLogin } from '@/hooks/useMutation/Auth/usePostLogin'
 import { CardDescription } from '@/components/ui/card'
 
@@ -39,52 +34,26 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
 }
 
-export function UserAuthForm({
-  className,
-  redirectTo,
-  ...props
-}: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
+export function UserAuthForm({ className, redirectTo, ...props }: UserAuthFormProps) {
   const navigate = useNavigate()
-  const { auth } = useAuthStore()
   const loginMutation = usePostLogin()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      passwordHash: '',
-    },
+    defaultValues: { email: '', passwordHash: '' },
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      setIsLoading(true)
-  
-      const response = await loginMutation.mutateAsync({
+      await loginMutation.mutateAsync({
         email: data.email,
-        passwordHash: data.passwordHash,
+        password: data.passwordHash,
       })
-  
-      //response backend
-      response.data.token
-      response.data.user
-  
-      auth.setUser(response.data.user)
-      auth.setAccessToken(response.data.token)
-  
+
       toast.success('Login successful')
-  
-      navigate({
-        to: redirectTo || '/',
-        replace: true,
-      })
+      navigate({ to: redirectTo || '/', replace: true })
     } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || 'Login failed'
-      )
-    } finally {
-      setIsLoading(false)
+      toast.error(error?.response?.data?.message || 'Login failed')
     }
   }
 
@@ -127,54 +96,39 @@ export function UserAuthForm({
             </FormItem>
           )}
         />
-        <Button className='mt-2 bg-[#FFD500] hover:bg=#1d346a' disabled={isLoading}>
-          {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
+        <Button
+          className='mt-2 bg-[#FFD500] hover:bg-[#1d346a]'
+          disabled={loginMutation.isPending}
+        >
+          {loginMutation.isPending ? <Loader2 className='animate-spin' /> : <LogIn />}
           Log In
         </Button>
         <CardDescription>
-            Enter your email and password below to log into{' '}
-            <br className='max-sm:hidden' />  Don't have an
-            account?{' '}
-            <Link
-              to='/sign-up'
-              className='text-nowrap underline underline-offset-4 hover:text-primary'
-            >
-              Sign Up
-            </Link>
-          </CardDescription>
+          Enter your email and password below to log into{' '}
+          <br className='max-sm:hidden' /> Don&apos;t have an account?{' '}
+          <Link to='/sign-up' className='text-nowrap underline underline-offset-4 hover:text-primary'>
+            Sign Up
+          </Link>
+        </CardDescription>
         <div className='relative my-2'>
           <div className='absolute inset-0 flex items-center'>
             <span className='w-full border-t' />
           </div>
           <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background px-2 text-muted-foreground'>
-              Or continue with
-            </span>
+            <span className='bg-background px-2 text-muted-foreground'>Or continue with</span>
           </div>
         </div>
 
         <div className='grid grid-cols-1 gap-2'>
-          {/* <Button variant='outline' type='button' disabled={isLoading}>
-            <IconGmail className='h-4 w-4' /> Google
-          </Button>
-          <Button variant='outline' type='button' disabled={isLoading}>
-            <IconFacebook className='h-4 w-4' /> Facebook
-          </Button> */}
-
           <GoogleLogin
             onSuccess={(credentialResponse) => {
-              console.log(credentialResponse);
-
-              
-              
+              console.log(credentialResponse)
             }}
             onError={() => {
-              console.log('Login Failed');
+              console.log('Login Failed')
             }}
           />
         </div>
-
-      
       </form>
     </Form>
   )

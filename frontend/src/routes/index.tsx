@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { NavigationProgress } from '@/components/navigation-progress'
 import { GeneralError } from '@/features/errors/general-error'
 import { NotFoundError } from '@/features/errors/not-found-error'
-import {  UserMe } from '@/hooks/useQuery/useMe' 
+import type {  UserMe } from '@/hooks/useQuery/useMe' 
 
 interface MyRouterContext {
   queryClient: QueryClient

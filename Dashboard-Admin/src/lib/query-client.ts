@@ -44,7 +44,7 @@ export const getQueryClient = (): QueryClient => {
             toast.error("Session expired!")
             // lazy import untuk hindari circular dependency
             import("@/stores/auth-store").then(({ useAuthStore }) => {
-              useAuthStore.getState().clearUser()
+              useAuthStore.getState().auth.reset()
             })
             import("@tanstack/react-router").then(({ redirect }) => {
               throw redirect({ to: "/sign-in", replace: true })

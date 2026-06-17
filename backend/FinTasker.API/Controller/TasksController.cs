@@ -82,7 +82,7 @@ namespace FinTasker.API.Controller
         }
 
         [Authorize]
-        [HttpPatch("{id:guid}")]
+        [HttpPut("{id:guid}")]
         public async Task<ActionResult<ApiResponse<TaskDto>>> UpdateTask(
             [FromRoute] Guid id,
             [FromBody] UpdateTasksCommand command)

@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "moduleResolution": "node",
+    "types": ["@types/react-query-devtools"],
   "baseUrl": ".",
   "paths": {
     "@/*": ["./src/*"]

@@ -4,12 +4,13 @@ import { useAuthStore } from "@/stores/auth-store"
 import { AuthenticatedLayout } from "@/components/layout/authenticated-layout"
 
 export const Route = createFileRoute("/_authenticated")({
+  // 1. Manfaatkan context yang sudah di-fetch oleh komponen App di main.tsx
   beforeLoad: ({ context, location }) => {
     if (!context.auth.isAuthenticated) {
       throw redirect({
         to: "/sign-in",
         search: {
-          redirect: location.href, 
+          redirect: location.href,
         },
         replace: true,
       })
