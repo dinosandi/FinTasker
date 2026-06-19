@@ -33,5 +33,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     )
   },
   notFoundComponent: NotFoundError,
-  errorComponent: GeneralError,
+  errorComponent: ({ error }) => {
+    console.error('🚨 ROOT ROUTE ERROR:', error)
+    console.error('Message:', error?.message)
+    console.error('Stack:', error?.stack)
+    return <GeneralError />
+  },
+  
 })

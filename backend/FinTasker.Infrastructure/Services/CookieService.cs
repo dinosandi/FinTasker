@@ -92,7 +92,7 @@ namespace FinTasker.Infrastructure.Services
                 HttpOnly = true,
                 // Secure=true di Production (HTTPS), false di Development (HTTP local)
                 Secure   = false,
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Lax,
                 Expires  = expires,
                 Path     = path
             };

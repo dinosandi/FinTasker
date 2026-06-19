@@ -1,32 +1,19 @@
 import { createFileRoute, redirect } from "@tanstack/react-router"
-import { useEffect } from "react"
-import { useAuthStore } from "@/stores/auth-store"
 import { AuthenticatedLayout } from "@/components/layout/authenticated-layout"
+import { useAuthStore } from "@/stores/auth-store"
 
 export const Route = createFileRoute("/_authenticated")({
-  beforeLoad: ({ context, location }) => {
-    if (!context.auth.isAuthenticated) {
+  beforeLoad: ({ location }) => {
+    const { isAuthenticated } = useAuthStore.getState()
+    console.log('AUTH BEFORELOAD:', isAuthenticated)
+
+    if (!isAuthenticated) {
       throw redirect({
         to: "/sign-in",
-        search: {
-          redirect: location.href, 
-        },
+        search: { redirect: location.href },
         replace: true,
       })
     }
   },
-  component: RouteComponent,
+  component: () => <AuthenticatedLayout />,
 })
-
-function RouteComponent() {
-  const { auth } = Route.useRouteContext()
-  const setUser = useAuthStore((s) => s.setUser)
-
-  useEffect(() => {
-    if (auth.user) {
-      setUser(auth.user)
-    }
-  }, [auth.user, setUser])
-
-  return <AuthenticatedLayout />
-}

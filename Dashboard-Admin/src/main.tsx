@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { StrictMode, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { AxiosError } from 'axios'
 import {
@@ -52,7 +52,7 @@ const queryClient = new QueryClient({
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           toast.error('Session expired!')
-          useAuthStore.getState().auth.reset()
+          useAuthStore.getState().reset()
           const redirect = `${router.history.location.href}`
           router.navigate({ to: '/sign-in', search: { redirect } })
         }
@@ -88,11 +88,16 @@ declare module '@tanstack/react-router' {
 
 function App() {
   const { data: user, isLoading } = useMe()
+  useEffect(() => {
+    if (user) {
+      useAuthStore.getState().setUser(user)
+    }
+  }, [user])
 
   if (isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
-        <p className="text-sm text-muted-foreground animate-pulse">Loading authentication...</p>
+        <p className="text-sm text-muted-foreground animate-pulse">Loading ...</p>
       </div>
     )
   }
@@ -101,6 +106,7 @@ function App() {
     <RouterProvider 
       router={router} 
       context={{
+        queryClient,
         auth: {
           isAuthenticated: !!user,
           user: user ?? null

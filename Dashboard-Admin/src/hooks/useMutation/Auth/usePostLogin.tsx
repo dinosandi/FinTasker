@@ -1,33 +1,9 @@
 import { useMutation } from "@tanstack/react-query"
 import { api } from "@/config/api"
-import { useAuthStore } from "@/stores/auth-store"
-
-
-interface LoginPayload {
-  email: string
-  password: string
-}
-
-interface ApiResponse<T> {
-  success: boolean
-  message: string
-  data: T
-}
 
 export const usePostLogin = () => {
   return useMutation({
-    mutationFn: (payload: LoginPayload) =>
-      api.post<ApiResponse<null>>("/auth/login", payload),
-    onSuccess: async () => {
-      await syncAuthContext()
-    },
-
-    onError: () => {
-      useAuthStore.getState().auth.reset()
-    },
+    mutationFn: (payload: { email: string; password: string }) =>
+      api.post("/auth/login", payload),
   })
-}
-
-function syncAuthContext() {
-  throw new Error("Function not implemented.")
 }

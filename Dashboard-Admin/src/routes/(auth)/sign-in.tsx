@@ -1,15 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router"
-import { useMe } from "@/hooks/useQuery/useMe"
 import { SignIn } from "@/features/auth/sign-in"
+import { useAuthStore } from "@/stores/auth-store"
 
 export const Route = createFileRoute("/(auth)/sign-in")({
-  beforeLoad: async ({ context }) => {
-    const isLoggedIn = await context.queryClient
-      .ensureQueryData({ queryKey: ["auth", "me"], queryFn: useMe })
-      .then(() => true)
-      .catch(() => false)
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState()
+    console.log('SIGNIN BEFORELOAD isAuthenticated:', isAuthenticated)
 
-    if (isLoggedIn) {
+    if (isAuthenticated) {
       throw redirect({ to: "/", replace: true })
     }
   },

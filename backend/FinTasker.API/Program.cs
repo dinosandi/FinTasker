@@ -57,6 +57,7 @@ builder.Services.AddAuthentication(options =>
         OnMessageReceived = context =>
         {
             var token = context.Request.Cookies["access_token"];
+            Console.WriteLine($"[JWT] Cookie access_token: {(string.IsNullOrEmpty(token) ? "TIDAK ADA" : "ADA → " + token[..20])}");
             if (!string.IsNullOrEmpty(token))
                 context.Token = token;
             return Task.CompletedTask;
