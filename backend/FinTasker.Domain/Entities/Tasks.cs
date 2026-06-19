@@ -16,10 +16,8 @@ namespace FinTasker.Domain.Entities
         public int Estimed_Minutes { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
-
         // Navigation property
         public Projects Project { get; set; }
-
         // untuk relasi one-to-many dengan TaskTimeLogs
         public ICollection<TaskTimeLogs> TaskTimeLogs { get; set; } // untuk log waktu kerja pada task
         public ICollection<TaskActivities> TaskActivities { get; set; } // untuk checklist dalam task
@@ -27,8 +25,6 @@ namespace FinTasker.Domain.Entities
         public ICollection<PomodoroSession> PomodoroSession { get; set; } // untuk milestone dalam task
         public ICollection<TaskTagRelations> TaskTagRelations { get; set; } // untuk milestone dalam task
         public ICollection<TaskResources> TaskResources { get; set; } // untuk milestone dalam task
-
-
     }
 }
 

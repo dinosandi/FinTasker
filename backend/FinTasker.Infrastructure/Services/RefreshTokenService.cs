@@ -40,9 +40,19 @@ namespace FinTasker.Infrastructure.Services
 
         public async Task<RefreshTokens?> GetValidTokenAsync(string token)
         {
-            return await _context.RefreshTokens
-                .Include(rt => rt.Users)
-                .FirstOrDefaultAsync(rt => rt.Token == token && rt.IsActive);
+            Console.WriteLine($"SEARCH TOKEN: {token}");
+
+            var refreshToken = await _context.RefreshTokens
+                .AsNoTracking()
+                .Include(r => r.Users)
+                .FirstOrDefaultAsync(r =>
+                    r.Token == token &&
+                    r.RevokedAt == null &&
+                    r.ExpiresAt > DateTime.UtcNow);
+            
+            Console.WriteLine($"FOUND TOKEN: {refreshToken != null}");
+
+            return refreshToken;
         }
 
         public async Task RevokeTokenAsync(string token, string? ipAddress = null)

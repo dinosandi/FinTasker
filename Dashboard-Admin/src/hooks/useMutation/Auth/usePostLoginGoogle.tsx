@@ -6,7 +6,7 @@ export const usePostLoginGoogle = () => {
     return useMutation({
         mutationKey: ["loginGoogle"],
         mutationFn: async (data: GoogleLogin) => {
-            const response = await api.post("/Auth/google-login", data);
+            const response = await api.post("/auth/google-login", data);
             return response.data;
         },
     });

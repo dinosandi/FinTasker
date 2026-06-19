@@ -81,7 +81,7 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginWithGoogle
                     Name = user.Name
                 };
 
-                return ApiResponse<AuthResponse>.SuccessResponse(response, "Login Google berhasil");
+                return ApiResponse<AuthResponse>.Ok(response, "Login Google berhasil");
             }
             catch (NotFoundException ex)
             {

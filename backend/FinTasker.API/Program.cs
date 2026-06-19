@@ -16,6 +16,8 @@ using FinTasker.Application.Common.Behaviours;
 using FluentValidation;
 using FinTasker.API.Middleware;
 using FinTasker.Application;
+using FinTasker.API.Hubs;
+using FinTasker.Application.Common.Interfaces.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +57,7 @@ builder.Services.AddAuthentication(options =>
         OnMessageReceived = context =>
         {
             var token = context.Request.Cookies["access_token"];
+            Console.WriteLine($"[JWT] Cookie access_token: {(string.IsNullOrEmpty(token) ? "TIDAK ADA" : "ADA → " + token[..20])}");
             if (!string.IsNullOrEmpty(token))
                 context.Token = token;
             return Task.CompletedTask;
@@ -138,6 +141,8 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddValidatorsFromAssembly(
     typeof(ApplicationAssemblyMarker).Assembly);
 
+// websocket
+builder.Services.AddSignalR();
 
 
 //  SERVICES
@@ -155,10 +160,26 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProjectsService, ProjectsService>();
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 
+builder.Services.AddScoped<INotificationHubClient, NotificationHubClient>();
+
+builder.Services.AddScoped<INotificationsRepository, NotificationsRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ITasksService, TasksService>();
+builder.Services.AddScoped<ITaskActivitiesRepository, TaskActivitiesRepository>();
+builder.Services.AddScoped<ITaskActivityService, TaskActivityService>();
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups";
+    context.Response.Headers["Cross-Origin-Embedder-Policy"] = "unsafe-none";
+
+    await next();
+});
+
 
 //  MIDDLEWARE
 if (app.Environment.IsDevelopment())
@@ -168,12 +189,14 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection(); // Nonaktifkan untuk development agar tidak perlu setup HTTPS
+app.UseCors("AllowFrontend");
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<CookieToAuthorizationMiddleware>(); 
-app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<NotificationHub>("/hubs/notifications");
+
 
 app.MapControllers();
 

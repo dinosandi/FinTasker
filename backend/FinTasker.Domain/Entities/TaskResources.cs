@@ -2,7 +2,6 @@ using System;
 
 namespace FinTasker.Domain.Entities
 {
-
     public class TaskResources
     {
         public Guid Id { get; set; }

@@ -18,6 +18,8 @@
   <ItemGroup>
     <Folder Include="Common\Behaviours\" />
     <Folder Include="Common\Exceptions\" />
+    <Folder Include="Common\Extensions\" />
+    <Folder Include="Common\Interfaces\Hubs\" />
     <Folder Include="Common\Models\" />
     <Folder Include="Features\Auth\Commands\LoginManualWithEmail\" />
     <Folder Include="Features\Auth\Commands\LoginWithGoogle\" />
@@ -28,11 +30,13 @@
     <Folder Include="Features\Projects\DTOs\" />
     <Folder Include="Features\Projects\Queries\GetByIdProject\" />
     <Folder Include="Features\Tasks\Commands\DeleteTasks\" />
+    <Folder Include="Features\Tasks\Commands\UpdateTasksStatus\" />
     <Folder Include="Features\Tasks\Commands\UpdateTasks\" />
     <Folder Include="Features\Tasks\DTOs\" />
     <Folder Include="Features\Tasks\Queries\" />
     <Folder Include="Features\Tasks\Queries\GetAllTasks\" />
     <Folder Include="Features\Tasks\Queries\GetByIdTasks\" />
+    <Folder Include="Features\Tasks\Queries\GetFilteredTasks\" />
     <Folder Include="Users\" />
     <Folder Include="Users\Command\" />
     <Folder Include="Users\Command\Login\" />

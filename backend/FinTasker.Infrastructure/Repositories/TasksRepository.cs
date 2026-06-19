@@ -12,6 +12,9 @@ namespace FinTasker.Infrastructure.Repositories
         {
             _context = context;
         }
+        
+        public IQueryable<Tasks> GetQueryable()
+        => _context.Tasks;
 
         public async Task CreateTasksAsync(Tasks tasks, CancellationToken ct = default)
         {
@@ -22,6 +25,7 @@ namespace FinTasker.Infrastructure.Repositories
         public async Task<Tasks> GetTaskByIdAsync(Guid Id, CancellationToken ct = default)
         => await _context.Tasks
         .AsNoTracking()
+        .Include(t => t.Project)
         .FirstOrDefaultAsync(t => t.Id == Id, ct);
         
         public async Task DeleteTaskAsync(Tasks task, CancellationToken ct = default)

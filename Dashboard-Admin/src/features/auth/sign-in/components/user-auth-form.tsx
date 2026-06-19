@@ -1,13 +1,20 @@
-import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
+import { api } from '@/config/api'
+import { GoogleLogin } from '@react-oauth/google'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
-import {  cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { usePostLogin } from '@/hooks/useMutation/Auth/usePostLogin'
+import { usePostLoginGoogle } from '@/hooks/useMutation/Auth/usePostLoginGoogle'
+import { ME_QUERY_KEY } from '@/hooks/useQuery/useMe'
 import { Button } from '@/components/ui/button'
+import { CardDescription } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -18,12 +25,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-
-import { GoogleLogin } from '@react-oauth/google';
-
-// Implementasi feature sign in form API 
-import { usePostLogin } from '@/hooks/useMutation/Auth/usePostLogin'
-import { CardDescription } from '@/components/ui/card'
 
 const formSchema = z.object({
   email: z.email({
@@ -44,50 +45,51 @@ export function UserAuthForm({
   redirectTo,
   ...props
 }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
-  const { auth } = useAuthStore()
+  const loginGoogleMutation = usePostLoginGoogle()
+  const queryClient = useQueryClient()
   const loginMutation = usePostLogin()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      passwordHash: '',
-    },
+    defaultValues: { email: '', passwordHash: '' },
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      setIsLoading(true)
-  
-      const response = await loginMutation.mutateAsync({
+      console.log('[1] mutateAsync start')
+      await loginMutation.mutateAsync({
         email: data.email,
-        passwordHash: data.passwordHash,
+        password: data.passwordHash,
       })
-  
-      //response backend
-      response.data.token
-      response.data.user
-  
-      auth.setUser(response.data.user)
-      auth.setAccessToken(response.data.token)
-  
+      console.log('[2] mutateAsync done')
+
+      queryClient.removeQueries({ queryKey: ME_QUERY_KEY })
+      const user = await queryClient.fetchQuery({
+        queryKey: ME_QUERY_KEY,
+        queryFn: async () => {
+          const res = await api.get('/auth/me')
+          return res.data.data
+        },
+        staleTime: 0,
+      })
+
+      console.log('[3] /me fetched, invalidating router')
+
+      useAuthStore.getState().setUser(user)
+
+      console.log('[4] router invalidated, navigating to:', redirectTo || '/')
+
       toast.success('Login successful')
-  
-      navigate({
-        to: redirectTo || '/',
-        replace: true,
-      })
+
+      await navigate({ to: redirectTo || '/', replace: true }) // ← ini yang hilang
+      console.log('[5] navigate called')
     } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || 'Login failed'
-      )
-    } finally {
-      setIsLoading(false)
+      console.error('[ERROR] onSubmit catch:', error)
+      useAuthStore.getState().reset()
+      toast.error(error?.response?.data?.message || error.message)
     }
   }
-
   return (
     <Form {...form}>
       <form
@@ -127,21 +129,27 @@ export function UserAuthForm({
             </FormItem>
           )}
         />
-        <Button className='mt-2 bg-[#FFD500] hover:bg=#1d346a' disabled={isLoading}>
-          {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
+        <Button
+          className='mt-2 bg-[#FFD500] hover:bg-[#1d346a]'
+          disabled={loginMutation.isPending}
+        >
+          {loginMutation.isPending ? (
+            <Loader2 className='animate-spin' />
+          ) : (
+            <LogIn />
+          )}
           Log In
         </Button>
         <CardDescription>
-            Enter your email and password below to log into{' '}
-            <br className='max-sm:hidden' />  Don't have an
-            account?{' '}
-            <Link
-              to='/sign-up'
-              className='text-nowrap underline underline-offset-4 hover:text-primary'
-            >
-              Sign Up
-            </Link>
-          </CardDescription>
+          Enter your email and password below to log into{' '}
+          <br className='max-sm:hidden' /> Don&apos;t have an account?{' '}
+          <Link
+            to='/sign-up'
+            className='text-nowrap underline underline-offset-4 hover:text-primary'
+          >
+            Sign Up
+          </Link>
+        </CardDescription>
         <div className='relative my-2'>
           <div className='absolute inset-0 flex items-center'>
             <span className='w-full border-t' />
@@ -154,27 +162,34 @@ export function UserAuthForm({
         </div>
 
         <div className='grid grid-cols-1 gap-2'>
-          {/* <Button variant='outline' type='button' disabled={isLoading}>
-            <IconGmail className='h-4 w-4' /> Google
-          </Button>
-          <Button variant='outline' type='button' disabled={isLoading}>
-            <IconFacebook className='h-4 w-4' /> Facebook
-          </Button> */}
-
           <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              console.log(credentialResponse);
+            onSuccess={async (credentialResponse) => {
+              try {
+                await loginGoogleMutation.mutateAsync({
+                  idToken: credentialResponse.credential!,
+                })
 
-              
-              
-            }}
-            onError={() => {
-              console.log('Login Failed');
+                queryClient.removeQueries({ queryKey: ME_QUERY_KEY })
+                const user = await queryClient.fetchQuery({
+                  queryKey: ME_QUERY_KEY,
+                  queryFn: async () => {
+                    const res = await api.get('/auth/me')
+                    return res.data.data
+                  },
+                  staleTime: 0,
+                })
+
+                useAuthStore.getState().setUser(user)
+
+                toast.success('Login successful')
+                await navigate({ to: redirectTo || '/', replace: true })
+              } catch (error) {
+                useAuthStore.getState().reset()
+                toast.error('Login failed')
+              }
             }}
           />
         </div>
-
-      
       </form>
     </Form>
   )

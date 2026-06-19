@@ -4,12 +4,13 @@ using FinTasker.Application.Common.Models;
 using FinTasker.Application.Common.Interfaces.Repository;
 using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Application.Features.Projects.DTOs;
+using FinTasker.Application.Common.Extensions;
 
 
 namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
 {
     public class GetAllProjectHandler
-        : IRequestHandler<GetAllProjectQuery, ApiResponse<PaginatedResult<ProjectDto>>>
+        : IRequestHandler<GetAllProjectQuery, ApiResponse<List<ProjectDto>>>
     {
         private readonly IProjectsRepository _projectsRepository;
         private readonly ICurrentUserService _currentUserService;
@@ -22,7 +23,7 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
             _currentUserService = currentUserService;
         }
 
-        public async Task<ApiResponse<PaginatedResult<ProjectDto>>> Handle(
+        public async Task<ApiResponse<List<ProjectDto>>> Handle(
             GetAllProjectQuery request,
             CancellationToken cancellationToken)
         {
@@ -40,8 +41,6 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
                 query = query.Where(p =>
                     p.Name.Contains(request.Search) ||
                     p.Description.Contains(request.Search));
-
-
             // filter status
             if (request.Status.HasValue)
                 query = query.Where(p => p.Status == request.Status.Value);
@@ -64,38 +63,24 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
 
             var totalCount = await query.CountAsync(cancellationToken);  // ← nama konsisten
 
-            var items = await query
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
+            var result = await query
                 .Select(p => new ProjectDto
                 {
                     Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
-                    Status = p.Status,
-                    Color = p.Color,
+                    Status = p.Status.ToString(),
                     StartDate = p.StartDate,
                     EndDate = p.EndDate,
+                    Color = p.Color,
                     CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt,
+                    UpdatedAt = p.UpdatedAt                    
+                    
                 })
-                .ToListAsync(cancellationToken);
+                .ToPaginatedResultAsync(request, cancellationToken);  // ← pakai overload PaginationQuery
 
-            return new ApiResponse<PaginatedResult<ProjectDto>>
-            {
-                Success = true,
-                Message = "Projects retrieved successfully.",
-                Data = new PaginatedResult<ProjectDto>
-                {
-                    Items = items,
-                    TotalCount = totalCount,
-                    Page = request.Page,
-                    PageSize = request.PageSize
-                }
-            };
+            return ApiResponse<List<ProjectDto>>.OkPaginated(result, "Projects successfully fetched.");
         }
     }
-
-
 }
 

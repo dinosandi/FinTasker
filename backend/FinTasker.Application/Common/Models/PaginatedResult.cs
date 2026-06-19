@@ -1,17 +1,21 @@
-using System;
-
 namespace FinTasker.Application.Common.Models
 {
     public class PaginatedResult<T>
     {
         public List<T> Items { get; init; } = [];
-        public int TotalCount { get; init; }
-        public int Page { get; init; }
-        public int PageSize { get; init; }
-        public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
-        public bool HasNextPage => Page < TotalPages;
-        public bool HasPreviousPage => Page > 1;
+        public PaginationMeta Meta { get; init; } = new();
+
+        public static PaginatedResult<T> Create(
+            List<T> items,
+            int totalCount,
+            int page,
+            int pageSize)
+        {
+            return new PaginatedResult<T>
+            {
+                Items = items,
+                Meta = PaginationMeta.From(totalCount, page, pageSize)
+            };
+        }
     }
-
 }
-

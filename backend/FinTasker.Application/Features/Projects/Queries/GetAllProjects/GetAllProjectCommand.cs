@@ -6,5 +6,5 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
 {
 
     public record GetAllProjectQuery : PaginationQuery,   // ← inherit pagination properties
-        IRequest<ApiResponse<PaginatedResult<ProjectDto>>>;
+        IRequest<ApiResponse<List<ProjectDto>>>;
 }

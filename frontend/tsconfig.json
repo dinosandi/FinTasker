@@ -1,11 +1,20 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     "verbatimModuleSyntax": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
     "ignoreDeprecations": "6.0"
+=======
+    "moduleResolution": "node",
+    "types": ["@types/react-query-devtools"],
+  "baseUrl": ".",
+  "paths": {
+    "@/*": ["./src/*"]
+  }
+>>>>>>> dev
   },
   "files": [],
   "references": [

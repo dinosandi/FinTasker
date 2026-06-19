@@ -32,6 +32,8 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
             // 2. Generate refresh token
             var refreshToken = await _refreshTokenService
                 .GenerateRefreshTokenAsync(authResult.UserId);
+            
+            Console.WriteLine($"userId: {authResult.Email} | refreshToken: {refreshToken.Token}");
 
             // 3. Simpan ke HttpOnly cookie — tidak expose ke client
             _cookieService.SetAccessTokenCookie(authResult.AccessToken);
@@ -45,7 +47,7 @@ namespace FinTasker.Application.Features.Auth.Commands.LoginManualWithEmail
                 Name   = authResult.Name
             };
 
-            return ApiResponse<AuthResponse>.SuccessResponse(response, "Login successful.");
+            return ApiResponse<AuthResponse>.Ok(response, "Login successful.");
         }
     }
 }

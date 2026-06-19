@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthPage from "@/pages/Login/Auth";
 
@@ -10,3 +11,42 @@ export const AppRouter = () => {
     </BrowserRouter>
   );
 };
+=======
+import { type QueryClient } from '@tanstack/react-query'
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { Toaster } from '@/components/ui/sonner'
+import { NavigationProgress } from '@/components/navigation-progress'
+import { GeneralError } from '@/features/errors/general-error'
+import { NotFoundError } from '@/features/errors/not-found-error'
+import type {  UserMe } from '@/hooks/useQuery/useMe' 
+
+interface MyRouterContext {
+  queryClient: QueryClient
+  auth: {
+    isAuthenticated: boolean
+    user: UserMe | null
+  }
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
+  component: () => {
+    return (
+      <>
+        <NavigationProgress />
+        <Outlet />
+        <Toaster duration={5000} />
+        {import.meta.env.MODE === 'development' && (
+          <>
+            <ReactQueryDevtools buttonPosition='bottom-left' />
+            <TanStackRouterDevtools position='bottom-right' />
+          </>
+        )}
+      </>
+    )
+  },
+  notFoundComponent: NotFoundError,
+  errorComponent: GeneralError,
+})
+>>>>>>> dev

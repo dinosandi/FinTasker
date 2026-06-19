@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { StrictMode, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { AxiosError } from 'axios'
 import {
@@ -13,19 +13,15 @@ import { handleServerError } from '@/lib/handle-server-error'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
-// Generated Routes
+import { useMe } from './hooks/useQuery/useMe'
 import { routeTree } from './routeTree.gen'
-// Styles
 import './styles/index.css'
-
-// Provider Google OAuth
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: (failureCount, error) => {
-        // eslint-disable-next-line no-console
         if (import.meta.env.DEV) console.log({ failureCount, error })
 
         if (failureCount >= 0 && import.meta.env.DEV) return false
@@ -56,56 +52,85 @@ const queryClient = new QueryClient({
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           toast.error('Session expired!')
-          useAuthStore.getState().auth.reset()
+          useAuthStore.getState().reset()
           const redirect = `${router.history.location.href}`
           router.navigate({ to: '/sign-in', search: { redirect } })
         }
         if (error.response?.status === 500) {
           toast.error('Internal Server Error!')
-          // Only navigate to error page in production to avoid disrupting HMR in development
           if (import.meta.env.PROD) {
             router.navigate({ to: '/500' })
           }
-        }
-        if (error.response?.status === 403) {
-          // router.navigate("/forbidden", { replace: true });
         }
       }
     },
   }),
 })
 
-// Create a new router instance
 const router = createRouter({
   routeTree,
-  context: { queryClient },
+  context: {
+    queryClient: queryClient,
+    auth: {
+      isAuthenticated: false,
+      user: null
+    }
+  },
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
 })
 
-// Register the router instance for type safety
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router
   }
 }
 
-// Render the app
+function App() {
+  const { data: user, isLoading } = useMe()
+  useEffect(() => {
+    if (user) {
+      useAuthStore.getState().setUser(user)
+    }
+  }, [user])
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <p className="text-sm text-muted-foreground animate-pulse">Loading ...</p>
+      </div>
+    )
+  }
+
+  return (
+    <RouterProvider 
+      router={router} 
+      context={{
+        queryClient,
+        auth: {
+          isAuthenticated: !!user,
+          user: user ?? null
+        }
+      }} 
+    />
+  )
+}
+
 const rootElement = document.getElementById('root')!
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <FontProvider>
-            <DirectionProvider>
-              <RouterProvider router={router} />
-            </DirectionProvider>
-          </FontProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <FontProvider>
+              <DirectionProvider>
+                <App /> 
+              </DirectionProvider>
+            </FontProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
       </GoogleOAuthProvider>
     </StrictMode>
   )

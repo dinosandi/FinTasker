@@ -56,7 +56,7 @@ public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, ApiRes
             Id = project.Id,
             Name = project.Name,
             Description = project.Description,
-            Status = project.Status,
+            Status = project.Status.ToString(),
             Color = project.Color,
             StartDate = project.StartDate,
             EndDate = project.EndDate,

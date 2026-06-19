@@ -33,10 +33,18 @@ namespace FinTasker.Application.Features.Auth.Commands.RefreshToken
             var refreshToken = await _refreshTokenService.GetValidTokenAsync(token)
                 ?? throw new UnauthorizedAccessException("Refresh token tidak valid atau sudah expired.");
 
+            if (refreshToken.Users == null)
+            {
+                throw new UnauthorizedAccessException("User tidak ditemukan.");
+            }
+
+
             // 3. Rotate: revoke yang lama, buat yang baru (best practice)
             await _refreshTokenService.RevokeTokenAsync(token);
             var newRefreshToken = await _refreshTokenService
                 .GenerateRefreshTokenAsync(refreshToken.UsersId);
+
+            Console.WriteLine($"Refresh token baru: {newRefreshToken.Token}");
 
             // 4. Generate access token baru
             var newAccessToken = _jwtService.GenerateToken(refreshToken.Users);

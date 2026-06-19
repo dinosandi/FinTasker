@@ -6,10 +6,10 @@ import { useAuthStore } from "@/stores/auth-store"
 export const usePostLogout = () => {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const clearUser = useAuthStore((s) => s.clearUser)
+  const clearUser = useAuthStore((s) => s.reset)
 
   return useMutation({
-    mutationFn: () => api.post("/Auth/logout"),
+    mutationFn: () => api.post("/auth/logout"),
 
     onSuccess: () => {
       clearUser()

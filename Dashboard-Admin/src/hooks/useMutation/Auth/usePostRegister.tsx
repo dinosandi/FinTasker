@@ -7,7 +7,7 @@ export const usePostRegister = () => {
         mutationKey: ['register'],
 
         mutationFn: async (data: RegisterUser) => {
-            const response = await api.post('/Auth/register', data)
+            const response = await api.post('/auth/register', data)
             return response.data
         },
     })
