@@ -41,11 +41,11 @@ namespace FinTasker.Infrastructure.Repositories
             await _context.SaveChangesAsync(ct);
         }
 
-        // public async Task DeleteTaskAsync(Tasks task)
-        // {
-        //     _context.Tasks.Remove(task);
-        //     await _context.SaveChangesAsync();
-        // }
+        public async Task BulkDeleteTasksAsync(IEnumerable<Tasks> tasks, CancellationToken ct = default)
+        {
+            _context.Tasks.RemoveRange(tasks);
+            await _context.SaveChangesAsync(ct);
+        }
 
     }
 }

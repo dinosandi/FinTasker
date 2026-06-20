@@ -80,7 +80,12 @@ export function UserAuthForm({
 
       console.log('[4] router invalidated, navigating to:', redirectTo || '/')
 
-      toast.success('Login successful')
+      toast.success('Login successful', {
+        style: {
+          background: '#22c55e',
+          color: '#fff',
+        },
+      });
 
       await navigate({ to: redirectTo || '/', replace: true }) // ← ini yang hilang
       console.log('[5] navigate called')

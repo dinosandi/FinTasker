@@ -72,9 +72,8 @@ export function Overview() {
         />
         <Bar
           dataKey='total'
-          fill='currentColor'
+          fill='#FFD500'
           radius={[4, 4, 0, 0]}
-          className='fill-primary'
         />
       </BarChart>
     </ResponsiveContainer>

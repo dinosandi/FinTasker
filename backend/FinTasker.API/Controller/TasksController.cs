@@ -9,6 +9,7 @@ using FinTasker.Application.Features.Tasks.Commands.UpdateTasks;
 using FinTasker.Domain.Enums;
 using FinTasker.Application.Features.Tasks.Queries.GetFilteredTasks;
 using FinTasker.Application.Features.Tasks.Commands.UpdateTasksStatus;
+using FinTasker.Application.Features.Tasks.Commands.BulkDeleted;
 
 
 namespace FinTasker.API.Controller
@@ -55,7 +56,6 @@ namespace FinTasker.API.Controller
         }
 
 
-
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<ApiResponse<TaskDto>>> CreateTask(
@@ -79,6 +79,14 @@ namespace FinTasker.API.Controller
             var result = await _mediator.Send(command);
 
             return result.Success ? Ok(result) : BadRequest(result);
+        }
+
+        [Authorize]
+        [HttpDelete("bulk")]
+        public async Task<IActionResult> BulkDelete([FromBody] BulkDeleteTasksCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [Authorize]
