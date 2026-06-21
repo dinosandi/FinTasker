@@ -60,7 +60,7 @@ namespace FinTasker.Application.Features.Tasks.DTOs
     public class TaskActivityDto
     {
         public Guid Id { get; set; }
-        public ActivityType ActivityType { get; set; }
+        public string ActivityType { get; set; }
         public string Description { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
     }
