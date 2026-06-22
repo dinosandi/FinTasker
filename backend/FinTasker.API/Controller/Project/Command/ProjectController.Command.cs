@@ -6,13 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using FinTasker.Application.Features.Projects.Commands.UpdateProject;
 using FinTasker.Application.Features.Projects.DTOs;
 using FinTasker.Application.Features.Projects.Commands.DeleteProject;
-using FinTasker.Application.Features.Projects.Queries.GetAllProjects;
-using FinTasker.Application.Features.Projects.Queries.GetByIdProject;
 
-namespace FinTasker.API.Controller
+namespace FinTasker.API.Controller.Project.Command
 {
+    [Route("api/project")]
     [ApiController]
-    [Route("api/[controller]")]
     public class ProjectController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -22,7 +20,7 @@ namespace FinTasker.API.Controller
             _mediator = mediator;
         }
 
-        [Authorize]
+                [Authorize]
         [HttpPost]
         public async Task<ActionResult<ApiResponse<CreateProjectsResponse>>> CreateProject(
             [FromBody] CreateProjectsCommand command)
@@ -68,20 +66,7 @@ namespace FinTasker.API.Controller
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<ProjectDto>>>> GetAllProjects(CancellationToken ct)
-        {
-            var result = await _mediator.Send(new GetAllProjectQuery(), ct);
-            return Ok(result);
-        }
 
-        [Authorize]
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
-        {
-            var result = await _mediator.Send(new GetByIdProjectQuery(id), ct);
-            return Ok(result);
-        }
+
     }
 }

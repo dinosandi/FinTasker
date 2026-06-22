@@ -34,7 +34,6 @@
     <Folder Include="Features\Tasks\Commands\UpdateTasksStatus\" />
     <Folder Include="Features\Tasks\Commands\UpdateTasks\" />
     <Folder Include="Features\Tasks\DTOs\" />
-    <Folder Include="Features\Tasks\Queries\" />
     <Folder Include="Features\Tasks\Queries\GetAllTasks\" />
     <Folder Include="Features\Tasks\Queries\GetByIdTasks\" />
     <Folder Include="Features\Tasks\Queries\GetFilteredTasks\" />
