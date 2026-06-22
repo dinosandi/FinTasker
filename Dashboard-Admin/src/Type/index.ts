@@ -35,6 +35,19 @@ export enum ProjectStatus {
     Cancelled
 }
 
+export interface ProjectResponse {
+    id: string;
+    name: string;
+    description: string;
+    status: ProjectStatus;
+    color: string;
+    startDate: string;
+    endDate: string;
+    updatedAt: string;
+    createdAt: string;
+  }
+
+
 // Tasks
 export interface Tasks {
     ProjectId: string;

@@ -6,7 +6,7 @@ export const usePostProject = () => {
     return useMutation({
         mutationKey: ["postProject"],
         mutationFn: async (data: Project) => {
-            const response = await api.post("/Project", data);
+            const response = await api.post("/project", data);
             return response.data;
         },
     });
