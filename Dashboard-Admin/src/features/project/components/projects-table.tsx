@@ -83,10 +83,10 @@ export function ProjectsTable({ data }: DataTableProps) {
     onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: (row, _columnId, filterValue) => {
       const id = String(row.getValue('id')).toLowerCase()
-      const title = String(row.getValue('title')).toLowerCase()
+      const name = String(row.getValue('name')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
 
-      return id.includes(searchValue) || title.includes(searchValue)
+      return id.includes(searchValue) || name.includes(searchValue)
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -113,12 +113,12 @@ export function ProjectsTable({ data }: DataTableProps) {
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Filter by title or ID...'
+        searchPlaceholder='Filter by Project or ID...'
         filters={[
           {
             columnId: 'status',
-            title: 'Status',
-            options: statuses,
+            name: 'status',
+            options: [...statuses],
           },
         ]}
       />

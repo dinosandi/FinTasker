@@ -1,6 +1,5 @@
 import { faker } from '@faker-js/faker'
 
-// Set a fixed seed for consistent data generation
 faker.seed(12345)
 
 export const projects = Array.from({ length: 100 }, () => {

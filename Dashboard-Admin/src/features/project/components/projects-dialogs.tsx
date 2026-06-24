@@ -55,7 +55,7 @@ export function ProjectsDialogs() {
               )
             }}
             className='max-w-md'
-            title={`Delete this project: ${currentRow.id} ?`}
+            title={`Delete this project: ${currentRow.name} ?`}
             desc={
               <>
                 You are about to delete a project with the ID{' '}
