@@ -22,6 +22,7 @@ type ConfirmDialogProps = {
   isLoading?: boolean
   className?: string
   children?: React.ReactNode
+  confirmClassName?: string
 } & (
   | { form: string; handleConfirm?: undefined }
   | { form?: undefined; handleConfirm: () => void }
@@ -39,6 +40,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
     isLoading,
     disabled = false,
     form,
+    confirmClassName,
     handleConfirm,
     ...actions
   } = props
@@ -62,6 +64,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
             onClick={handleConfirm}
             variant={destructive ? 'destructive' : 'default'}
             disabled={disabled || isLoading}
+            className={confirmClassName}
           >
             {confirmText ?? 'Continue'}
           </Button>

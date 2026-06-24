@@ -1,8 +1,21 @@
 import { z } from 'zod'
+import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { CalendarIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { usePostProject } from '@/hooks/useMutation/Projects/usePostProject'
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -12,17 +25,14 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
+import { statusField } from '../data/data'
 import { type Project } from '../data/schema'
 
 type ProjectMutateDrawerProps = {
@@ -32,11 +42,14 @@ type ProjectMutateDrawerProps = {
 }
 
 const formSchema = z.object({
-  title: z.string().min(1, 'Title is required.'),
+  name: z.string().min(1, 'Project name is required.'),
   status: z.string().min(1, 'Please select a status.'),
-  label: z.string().min(1, 'Please select a label.'),
-  priority: z.string().min(1, 'Please choose a priority.'),
+  description: z.string().min(1, 'Description is required.'),
+  color: z.string().min(1, 'Please select a color.'),
+  startDate: z.string().min(1, 'Please select a start date.'),
+  endDate: z.string().min(1, 'Please select an end date.'),
 })
+
 type ProjectForm = z.infer<typeof formSchema>
 
 export function ProjectsMutateDrawer({
@@ -45,151 +58,242 @@ export function ProjectsMutateDrawer({
   currentRow,
 }: ProjectMutateDrawerProps) {
   const isUpdate = !!currentRow
+  const { mutate: postProject, isPending } = usePostProject()
 
   const form = useForm<ProjectForm>({
     resolver: zodResolver(formSchema),
     defaultValues: currentRow ?? {
-      title: '',
+      name: '',
       status: '',
-      priority: '',
+      description: '',
+      color: '',
+      startDate: '',
+      endDate: '',
     },
   })
 
   const onSubmit = (data: ProjectForm) => {
-    // do something with the form data
-    onOpenChange(false)
-    form.reset()
-    showSubmittedData(data)
+    const payload = {
+      name: data.name,
+      description: data.description,
+      status: parseInt(data.status, 10),
+      color: data.color,
+      startDate: data.startDate,
+      endDate: data.endDate,
+    }
+    postProject(payload as any, {
+      onSuccess: () => {
+        onOpenChange(false)
+        form.reset()
+      },
+      onError: (error) => {
+        console.error('Failed to create project:', error)
+      },
+    })
   }
 
   return (
-    <Sheet
+    <Dialog
       open={open}
       onOpenChange={(v) => {
         onOpenChange(v)
-        form.reset()
+        if (!v) form.reset()
       }}
     >
-      <SheetContent className='flex flex-col'>
-        <SheetHeader className='text-start'>
-          <SheetTitle>{isUpdate ? 'Update' : 'Create'} Project</SheetTitle>
-          <SheetDescription>
+      <DialogContent className='gap-6 sm:max-w-[520px]'>
+        <DialogHeader className='text-start'>
+          <DialogTitle>{isUpdate ? 'Update' : 'Create'} Project</DialogTitle>
+          <DialogDescription>
             {isUpdate
               ? 'Update the project by providing necessary info.'
-              : 'Add a new project by providing necessary info.'}
+              : 'Add a new project by providing necessary info.'}{' '}
             Click save when you&apos;re done.
-          </SheetDescription>
-        </SheetHeader>
+          </DialogDescription>
+        </DialogHeader>
+
         <Form {...form}>
           <form
             id='projects-form'
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex-1 space-y-6 overflow-y-auto px-4'
+            className='space-y-4'
           >
             <FormField
               control={form.control}
-              name='title'
+              name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>Project Name</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder='Enter a title' />
+                    <Input
+                      {...field}
+                      placeholder='Enter project name'
+                      disabled={isPending}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <div className='grid grid-cols-2 gap-4'>
+              <FormField
+                control={form.control}
+                name='status'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <SelectDropdown
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                      placeholder='Select status'
+                      disabled={isPending}
+                      items={statusField.map((status) => ({
+                        label: status.label,
+                        value: status.value,
+                      }))}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='color'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Color Tag</FormLabel>
+                    <FormControl>
+                      <div className='flex items-center gap-2'>
+                        <div className='relative h-10 w-10 flex-shrink-0 cursor-pointer overflow-hidden rounded-md border focus-within:ring-2 focus-within:ring-ring'>
+                          <input
+                            type='color'
+                            value={field.value || '#000000'}
+                            onChange={(e) => field.onChange(e.target.value)}
+                            disabled={isPending}
+                            className='absolute inset-0 h-[200%] w-[200%] -translate-x-1/4 -translate-y-1/4 cursor-pointer'
+                          />
+                        </div>
+
+                        {/* Text Input untuk melihat/mengetik manual kode HEX */}
+                        <Input
+                          type='text'
+                          placeholder='#ffffff'
+                          value={field.value}
+                          onChange={(e) => field.onChange(e.target.value)}
+                          disabled={isPending}
+                          maxLength={7}
+                          className='font-mono uppercase'
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className='grid grid-cols-2 gap-4'>
+              <FormField
+                control={form.control}
+                name='startDate'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel className='mb-1'>Start Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={'outline'}
+                            className={cn(
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                            disabled={isPending}
+                          >
+                            {field.value ? (
+                              format(new Date(field.value), 'PPP')
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0' align='start'>
+                        <Calendar
+                          mode='single'
+                          selected={
+                            field.value ? new Date(field.value) : undefined
+                          }
+                          onSelect={(date: Date | undefined) =>
+                            field.onChange(date?.toISOString())
+                          }
+                          disabled={() => isPending}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='endDate'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel className='mb-1'>End Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={'outline'}
+                            className={cn(
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                            disabled={isPending}
+                          >
+                            {field.value ? (
+                              format(new Date(field.value), 'PPP')
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0' align='start'>
+                        <Calendar
+                          mode='single'
+                          selected={
+                            field.value ? new Date(field.value) : undefined
+                          }
+                          onSelect={(date: Date | undefined) =>
+                            field.onChange(date?.toISOString())
+                          }
+                          disabled={() => isPending}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              name='status'
+              name='description'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <SelectDropdown
-                    defaultValue={field.value}
-                    onValueChange={field.onChange}
-                    placeholder='Select dropdown'
-                    items={[
-                      { label: 'In Progress', value: 'in progress' },
-                      { label: 'Backlog', value: 'backlog' },
-                      { label: 'Todo', value: 'todo' },
-                      { label: 'Canceled', value: 'canceled' },
-                      { label: 'Done', value: 'done' },
-                    ]}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='label'
-              render={({ field }) => (
-                <FormItem className='relative'>
-                  <FormLabel>Label</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className='flex flex-col space-y-1'
-                    >
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='documentation' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>
-                          Documentation
-                        </FormLabel>
-                      </FormItem>
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='feature' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>Feature</FormLabel>
-                      </FormItem>
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='bug' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>Bug</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='priority'
-              render={({ field }) => (
-                <FormItem className='relative'>
-                  <FormLabel>Priority</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className='flex flex-col space-y-1'
-                    >
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='high' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>High</FormLabel>
-                      </FormItem>
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='medium' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>Medium</FormLabel>
-                      </FormItem>
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='low' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>Low</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
+                    <Textarea
+                      {...field}
+                      placeholder='Enter project description...'
+                      className='resize-y'
+                      disabled={isPending}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -197,15 +301,23 @@ export function ProjectsMutateDrawer({
             />
           </form>
         </Form>
-        <SheetFooter className='gap-2'>
-          <SheetClose asChild>
-            <Button variant='outline'>Close</Button>
-          </SheetClose>
-          <Button form='projects-form' type='submit'>
-            Save changes
+
+        <DialogFooter className='gap-2 sm:gap-2'>
+          <DialogClose asChild>
+            <Button variant='outline' disabled={isPending}>
+              Close
+            </Button>
+          </DialogClose>
+          <Button
+            form='projects-form'
+            type='submit'
+            disabled={isPending}
+            className='bg-[#FFD500] text-black hover:bg-[#FFD500]/90 disabled:bg-[#FFD500]/50 disabled:text-black/50'
+          >
+            {isPending ? 'Saving...' : 'Save changes'}
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

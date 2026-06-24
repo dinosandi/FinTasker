@@ -20,6 +20,7 @@ export interface GoogleLogin {
 
 // Projects
 export interface Project {
+    Id : string;
     UsersId: string; // nanti ambil dari token/login user
     Name: string;
     Description: string;
@@ -46,6 +47,11 @@ export interface ProjectResponse {
     updatedAt: string;
     createdAt: string;
   }
+export interface ProjectQueryParams{
+    page: number;
+    pageSize: number;
+    search: string;
+}
 
 
 // Tasks

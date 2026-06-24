@@ -4,7 +4,6 @@ import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from '@radix-ui/react-icons'
-import { type Table } from '@tanstack/react-table'
 import { cn, getPageNumbers } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,17 +14,31 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-type DataTablePaginationProps<TData> = {
-  table: Table<TData>
+type DataTablePaginationProps = {
+  page: number
+  pageSize: number
+  totalPages: number
+  totalCount: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+  onPageChange: (page: number) => void
+  onPageSizeChange: (size: number) => void
+
   className?: string
 }
 
-export function DataTablePagination<TData>({
-  table,
+export function DataTablePagination({
+  page,
+  pageSize,
+  totalPages,
+  totalCount,
+  hasNextPage,
+  hasPreviousPage,
+  onPageChange,
+  onPageSizeChange,
   className,
-}: DataTablePaginationProps<TData>) {
-  const currentPage = table.getState().pagination.pageIndex + 1
-  const totalPages = table.getPageCount()
+}: DataTablePaginationProps) {
+  const currentPage = page
   const pageNumbers = getPageNumbers(currentPage, totalPages)
 
   return (
@@ -43,13 +56,13 @@ export function DataTablePagination<TData>({
         </div>
         <div className='flex items-center gap-2 @max-2xl/content:flex-row-reverse'>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={`${pageSize}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value))
+              onPageSizeChange(Number(value))
             }}
           >
             <SelectTrigger className='h-8 w-17.5'>
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side='top'>
               {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -71,8 +84,8 @@ export function DataTablePagination<TData>({
           <Button
             variant='outline'
             className='size-8 p-0 @max-md/content:hidden'
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => onPageChange(1)}
+            disabled={!hasPreviousPage}
           >
             <span className='sr-only'>Go to first page</span>
             <DoubleArrowLeftIcon className='h-4 w-4' />
@@ -80,8 +93,8 @@ export function DataTablePagination<TData>({
           <Button
             variant='outline'
             className='size-8 p-0'
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => onPageChange(page - 1)}
+            disabled={!hasPreviousPage}
           >
             <span className='sr-only'>Go to previous page</span>
             <ChevronLeftIcon className='h-4 w-4' />
@@ -96,7 +109,11 @@ export function DataTablePagination<TData>({
                 <Button
                   variant={currentPage === pageNumber ? 'default' : 'outline'}
                   className='h-8 min-w-8 px-2'
-                  onClick={() => table.setPageIndex((pageNumber as number) - 1)}
+                  onClick={() =>
+                    onPageChange(
+                      pageNumber as number
+                    )
+                  }
                 >
                   <span className='sr-only'>Go to page {pageNumber}</span>
                   {pageNumber}
@@ -108,8 +125,10 @@ export function DataTablePagination<TData>({
           <Button
             variant='outline'
             className='size-8 p-0'
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() =>
+              onPageChange(page + 1)
+            }
+            disabled={!hasNextPage}
           >
             <span className='sr-only'>Go to next page</span>
             <ChevronRightIcon className='h-4 w-4' />
@@ -117,8 +136,10 @@ export function DataTablePagination<TData>({
           <Button
             variant='outline'
             className='size-8 p-0 @max-md/content:hidden'
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
+            onClick={() =>
+              onPageChange(totalPages)
+            }
+            disabled={!hasNextPage}
           >
             <span className='sr-only'>Go to last page</span>
             <DoubleArrowRightIcon className='h-4 w-4' />

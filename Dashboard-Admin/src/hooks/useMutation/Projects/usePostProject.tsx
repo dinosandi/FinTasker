@@ -1,13 +1,23 @@
-import { api } from "@/config/api";
-import { useMutation } from "@tanstack/react-query";
-import { Project } from "@/Type";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { api } from '@/config/api'
+import { Project } from '@/Type'
 
 export const usePostProject = () => {
-    return useMutation({
-        mutationKey: ["postProject"],
-        mutationFn: async (data: Project) => {
-            const response = await api.post("/project", data);
-            return response.data;
-        },
-    });
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ['postProject'],
+
+    mutationFn: async (data: Project) => {
+      const response = await api.post(
+        '/project',data)
+      return response.data
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['projects'],
+      })
+    },
+  })
 }

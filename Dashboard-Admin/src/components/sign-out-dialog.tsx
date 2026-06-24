@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useAuthStore } from '@/stores/auth-store'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { usePostLogout } from '@/hooks/useMutation/Auth/usePostLogout'
+import Logout from "@/assets/image/Logout.svg"
 
 interface SignOutDialogProps {
   open: boolean
@@ -18,7 +19,7 @@ export function SignOutDialog({
   const location = useLocation()
   const logout = usePostLogout()
 
-  const clearUser = useAuthStore((state) => state.clearUser)
+  const clearUser = useAuthStore((state) => state.reset)
 
   const handleSignOut = async () => {
     try {
@@ -39,14 +40,27 @@ export function SignOutDialog({
 
   return (
     <ConfirmDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title='Sign out'
-      desc='Are you sure you want to sign out? You will need to sign in again to access your account.'
-      confirmText='Sign out'
-      destructive
-      handleConfirm={handleSignOut}
-      className='sm:max-w-sm'
-    />
+    open={open}
+    onOpenChange={onOpenChange}
+    title="Sign Out"
+    desc="Are you sure you want to sign out? You will need to sign in again to access your account."
+    confirmText="Sign Out"
+    handleConfirm={handleSignOut}
+    className="sm:max-w-md"
+    confirmClassName="
+      bg-[#FFD500]
+      text-black
+      hover:bg-[#e6c000]
+    "
+  >
+    <div className="flex justify-center py-2">
+      <img
+        src={Logout}
+        alt="Logout"
+        className="h-45 w-auto"
+      />
+    </div>
+  </ConfirmDialog>
+    
   )
 }
