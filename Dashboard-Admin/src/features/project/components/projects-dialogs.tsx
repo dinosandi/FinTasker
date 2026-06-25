@@ -1,10 +1,12 @@
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import Deleted from '@/assets/image/Deleted.svg'
+import { useDeleteProject } from '@/hooks/useMutation/Projects/useDeleteProject'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { ProjectsImportDialog } from './projects-import-dialog'
 import { ProjectsMutateDrawer } from './projects-mutate-drawer'
 import { useProjects } from './projects-provider'
 
 export function ProjectsDialogs() {
+  const DeleteProject = useDeleteProject()
   const { open, setOpen, currentRow, setCurrentRow } = useProjects()
   return (
     <>
@@ -35,6 +37,7 @@ export function ProjectsDialogs() {
           />
 
           <ConfirmDialog
+            isLoading={DeleteProject.isPending}
             key='project-delete'
             destructive
             open={open === 'delete'}
@@ -45,23 +48,34 @@ export function ProjectsDialogs() {
               }, 500)
             }}
             handleConfirm={() => {
-              setOpen(null)
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-              showSubmittedData(
-                currentRow,
-                'The following project has been deleted:'
-              )
+              DeleteProject.mutate(currentRow.id, {
+                onSuccess: () => {
+                  setOpen(null)
+
+                  setTimeout(() => {
+                    setCurrentRow(null)
+                  }, 500)
+                },
+              })
             }}
             className='max-w-md'
-            title={`Delete this project: ${currentRow.name} ?`}
+            title={`Delete this project?`}
             desc={
-              <>
-                You are about to delete a project with the ID{' '}
-                <strong>{currentRow.id}</strong>. <br />
-                This action cannot be undone.
-              </>
+              <div className='flex flex-col items-center gap-4 text-center'>
+                <img
+                  src={Deleted}
+                  alt='Delete Project'
+                  className='h-45 w-auto'
+                />
+
+                <div>
+                  You are about to delete
+                  <strong> {currentRow.name} </strong>
+                  project.
+                  <br />
+                  This action cannot be undone.
+                </div>
+              </div>
             }
             confirmText='Delete'
           />

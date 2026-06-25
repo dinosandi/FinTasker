@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   AlertDialog,
@@ -62,11 +63,20 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
             type={form ? 'submit' : 'button'}
             form={form}
             onClick={handleConfirm}
-            variant={destructive ? 'destructive' : 'default'}
             disabled={disabled || isLoading}
-            className={confirmClassName}
+            className={cn(
+              destructive && 'bg-[#FFD500] text-black hover:bg-[#FFD500]/90',
+              confirmClassName
+            )}
           >
-            {confirmText ?? 'Continue'}
+            {isLoading ? (
+              <>
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                Deleting...
+              </>
+            ) : (
+              (confirmText ?? 'Continue')
+            )}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

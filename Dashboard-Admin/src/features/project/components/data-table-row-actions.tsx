@@ -21,7 +21,6 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const project = projectSchema.parse(row.original)
-
   const { setOpen, setCurrentRow } = useProjects()
 
   return (

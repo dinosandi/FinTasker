@@ -7,9 +7,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-
+import { type PaginationMeta } from '@/Type/api'
 import { cn } from '@/lib/utils'
-
 import {
   Table,
   TableBody,
@@ -18,12 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-
 import { DataTablePagination } from '@/components/data-table'
-
-import { type PaginationMeta } from '@/Type/api'
 import { type Project } from '../data/schema'
-import { DataTableBulkActions } from './data-table-bulk-actions'
 import { projectsColumns as columns } from './projects-columns'
 
 type DataTableProps = {
@@ -42,11 +37,9 @@ export function ProjectsTable({
   onPageSizeChange,
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
-  const [sorting, setSorting] =
-    useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
 
-  const [columnVisibility, setColumnVisibility] =
-    useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
   const table = useReactTable({
     data,
@@ -62,82 +55,52 @@ export function ProjectsTable({
 
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onColumnVisibilityChange:
-      setColumnVisibility,
+    onColumnVisibilityChange: setColumnVisibility,
 
-    getCoreRowModel:
-      getCoreRowModel(),
+    getCoreRowModel: getCoreRowModel(),
 
-    getSortedRowModel:
-      getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   })
 
   return (
-    <div
-      className={cn(
-        'flex flex-1 flex-col gap-4'
-      )}
-    >
+    <div className={cn('flex flex-1 flex-col gap-4')}>
       <div className='overflow-hidden rounded-md border'>
         <Table>
           <TableHeader>
-            {table
-              .getHeaderGroups()
-              .map((headerGroup) => (
-                <TableRow
-                  key={headerGroup.id}
-                >
-                  {headerGroup.headers.map(
-                    (header) => (
-                      <TableHead
-                        key={header.id}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column
-                                .columnDef
-                                .header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    )
-                  )}
-                </TableRow>
-              ))}
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
           </TableHeader>
 
           <TableBody>
-            {table.getRowModel().rows
-              ?.length ? (
-              table
-                .getRowModel()
-                .rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                  >
-                    {row
-                      .getVisibleCells()
-                      .map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                        >
-                          {flexRender(
-                            cell.column
-                              .columnDef
-                              .cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                ))
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={
-                    columns.length
-                  }
+                  colSpan={columns.length}
                   className='h-24 text-center'
                 >
                   No Results
@@ -149,17 +112,14 @@ export function ProjectsTable({
       </div>
 
       <DataTablePagination
-  page={meta?.page ?? 1}
-  pageSize={meta?.pageSize ?? 10}
-  totalPages={meta?.totalPages ?? 1}
-  totalCount={meta?.totalCount ?? 0}
-  hasNextPage={meta?.hasNextPage ?? false}
-  hasPreviousPage={meta?.hasPreviousPage ?? false}
-  onPageChange={onPageChange}
-  onPageSizeChange={onPageSizeChange}
-/>
-      <DataTableBulkActions
-        table={table}
+        page={meta?.page ?? 1}
+        pageSize={meta?.pageSize ?? 10}
+        totalPages={meta?.totalPages ?? 1}
+        totalCount={meta?.totalCount ?? 0}
+        hasNextPage={meta?.hasNextPage ?? false}
+        hasPreviousPage={meta?.hasPreviousPage ?? false}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
       />
     </div>
   )

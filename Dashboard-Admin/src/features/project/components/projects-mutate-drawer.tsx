@@ -34,12 +34,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { statusField } from '../data/data'
 import { type Project } from '../data/schema'
+import { toast } from 'sonner'
 
 type ProjectMutateDrawerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   currentRow?: Project
 }
+
 
 const formSchema = z.object({
   name: z.string().min(1, 'Project name is required.'),
@@ -78,16 +80,18 @@ export function ProjectsMutateDrawer({
       description: data.description,
       status: parseInt(data.status, 10),
       color: data.color,
-      startDate: data.startDate,
-      endDate: data.endDate,
+      startDate: new Date(data.startDate),
+      endDate: new Date(data.endDate),
     }
-    postProject(payload as any, {
+  
+    postProject(payload, {
       onSuccess: () => {
         onOpenChange(false)
         form.reset()
       },
+  
       onError: (error) => {
-        console.error('Failed to create project:', error)
+        toast.error(error?.response?.data?.errors)
       },
     })
   }
@@ -173,10 +177,9 @@ export function ProjectsMutateDrawer({
                           />
                         </div>
 
-                        {/* Text Input untuk melihat/mengetik manual kode HEX */}
                         <Input
                           type='text'
-                          placeholder='#ffffff'
+                          placeholder='#ffd500'
                           value={field.value}
                           onChange={(e) => field.onChange(e.target.value)}
                           disabled={isPending}

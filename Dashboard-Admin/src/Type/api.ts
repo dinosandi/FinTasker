@@ -16,3 +16,11 @@ export interface PaginationMeta {
     errors?: string[] | null;
     traceId?: string;
   }
+
+  export interface ApiErrorResponse {
+    success: boolean
+    message: string
+    errors: string[]
+    statusCode: number
+    traceId: string
+  }

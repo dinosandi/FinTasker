@@ -53,6 +53,15 @@ export interface ProjectQueryParams{
     search: string;
 }
 
+export interface CreateProject {
+    name: string;
+    description: string;
+    status: ProjectStatus;
+    color: string;
+    startDate: Date;
+    endDate: Date;
+}
+
 
 // Tasks
 export interface Tasks {

@@ -22,7 +22,7 @@ namespace FinTasker.API.Controller.Project.Queries
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<ProjectDto>>>> GetAllProjects(
-            [FromQuery] GetAllProjectQuery query,  // ← binding dari query string
+            [FromQuery] GetAllProjectQuery query,  
             CancellationToken ct)
         {
             var result = await _mediator.Send(query, ct);
