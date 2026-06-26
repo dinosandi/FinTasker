@@ -5,7 +5,7 @@ export interface UserMe {
   id: string
   email: string
   name: string
-  avatar: string
+  avatarUrl: string
   provider: string
   role: string
 }

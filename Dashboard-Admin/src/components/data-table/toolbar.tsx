@@ -11,7 +11,7 @@ type DataTableToolbarProps<TData> = {
   searchKey?: string
   filters?: {
     columnId: string
-    title: string
+    name: string
     options: {
       label: string
       value: string
@@ -59,7 +59,7 @@ export function DataTableToolbar<TData>({
               <DataTableFacetedFilter
                 key={filter.columnId}
                 column={column}
-                title={filter.title}
+                title={filter.name}
                 options={filter.options}
               />
             )

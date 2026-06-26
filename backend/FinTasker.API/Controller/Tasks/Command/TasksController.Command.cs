@@ -1,65 +1,31 @@
-using Microsoft.AspNetCore.Mvc;
-using MediatR;
 using FinTasker.Application.Common.Models;
+using FinTasker.Application.Features.Tasks.Commands.BulkDeleted;
 using FinTasker.Application.Features.Tasks.Commands.CreateTasks;
-using Microsoft.AspNetCore.Authorization;
-using FinTasker.Application.Features.Tasks.DTOs;
 using FinTasker.Application.Features.Tasks.Commands.DeleteTasks;
 using FinTasker.Application.Features.Tasks.Commands.UpdateTasks;
-using FinTasker.Domain.Enums;
-using FinTasker.Application.Features.Tasks.Queries.GetFilteredTasks;
 using FinTasker.Application.Features.Tasks.Commands.UpdateTasksStatus;
+using FinTasker.Application.Features.Tasks.DTOs;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-
-namespace FinTasker.API.Controller
+namespace FinTasker.API.Controller.Tasks.Command
 {
-    [Route("api/[controller]")]
+    [Route("api/tasks")]
     [ApiController]
     public class TasksController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public TasksController(IMediator mediator)
+        private TasksController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [Authorize]
-        [HttpGet]
-        [ProducesResponseType(typeof(ApiResponse<PaginatedResult<TaskFilteredDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetFilteredTasks(
-                    [FromQuery] Guid? projectId,
-                    [FromQuery] StatusTask? status,
-                    [FromQuery] TaskPriority? priority,
-                    [FromQuery] string? tag,
-                    [FromQuery] string? search,
-                    [FromQuery] int page = 1,
-                    [FromQuery] int pageSize = 10,
-                    CancellationToken cancellationToken = default)
-        {
-            var query = new GetFilteredTasksQuery
-            {
-                ProjectId = projectId,
-                Status = status,
-                Priority = priority,
-                Tag = tag,
-                Search = search,
-                Page = page,
-                PageSize = pageSize
-            };
-
-            var result = await _mediator.Send(query, cancellationToken);
-
-            return Ok(result);
-        }
-
-
-
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<ApiResponse<TaskDto>>> CreateTask(
-            [FromBody] CreateTasksCommand command)
+    [FromBody] CreateTasksCommand command)
         {
             var result = await _mediator.Send(command);
 
@@ -68,17 +34,24 @@ namespace FinTasker.API.Controller
 
             return Ok(result);
         }
-
         [Authorize]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<ApiResponse<string>>> DeleteTask(
-            [FromRoute] Guid id)
+    [FromRoute] Guid id)
         {
             var command = new DeleteTasksCommand(id);
 
             var result = await _mediator.Send(command);
 
             return result.Success ? Ok(result) : BadRequest(result);
+        }
+
+        [Authorize]
+        [HttpDelete("bulk")]
+        public async Task<IActionResult> BulkDelete([FromBody] BulkDeleteTasksCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [Authorize]
@@ -116,6 +89,6 @@ namespace FinTasker.API.Controller
 
             return result.Success ? Ok(result) : BadRequest(result);
         }
-        
+
     }
 }

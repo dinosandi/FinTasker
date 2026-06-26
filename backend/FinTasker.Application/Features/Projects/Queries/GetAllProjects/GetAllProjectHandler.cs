@@ -6,7 +6,6 @@ using FinTasker.Application.Common.Interfaces.Service;
 using FinTasker.Application.Features.Projects.DTOs;
 using FinTasker.Application.Common.Extensions;
 
-
 namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
 {
     public class GetAllProjectHandler
@@ -60,8 +59,6 @@ namespace FinTasker.Application.Features.Projects.Queries.GetAllProjects
                                 : query.OrderBy(p => p.Status),
                 _ => query.OrderByDescending(p => p.CreatedAt)
             };
-
-            var totalCount = await query.CountAsync(cancellationToken);  // ← nama konsisten
 
             var result = await query
                 .Select(p => new ProjectDto

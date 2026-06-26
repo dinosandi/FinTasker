@@ -110,7 +110,7 @@ namespace FinTasker.Application.Features.Tasks.Queries.GetFilteredTasks
                         .Select(a => new TaskActivityDto
                         {
                             Id = a.Id,
-                            ActivityType = a.ActivityType,
+                            ActivityType = a.ActivityType.ToString(),
                             Description = a.Description,
                             CreatedAt = a.CreatedAt
                         })

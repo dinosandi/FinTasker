@@ -10,6 +10,7 @@ namespace FinTasker.Application.Common.Interfaces.Service
         bool VerifyPassword(string password, string passwordHash);
         string GenerateToken(Users users);
         Task<AuthResult> AuthenticateAsync(string email, string password);
+        Task<AuthResult> AuthenticateWithGoogleAsync(string IdToken, CancellationToken ct= default);
     }
 }
 

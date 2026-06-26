@@ -29,11 +29,11 @@
     <Folder Include="Features\Auth\Queries\GetCurrentUser\" />
     <Folder Include="Features\Projects\DTOs\" />
     <Folder Include="Features\Projects\Queries\GetByIdProject\" />
+    <Folder Include="Features\Tasks\Commands\BulkDeleted\" />
     <Folder Include="Features\Tasks\Commands\DeleteTasks\" />
     <Folder Include="Features\Tasks\Commands\UpdateTasksStatus\" />
     <Folder Include="Features\Tasks\Commands\UpdateTasks\" />
     <Folder Include="Features\Tasks\DTOs\" />
-    <Folder Include="Features\Tasks\Queries\" />
     <Folder Include="Features\Tasks\Queries\GetAllTasks\" />
     <Folder Include="Features\Tasks\Queries\GetByIdTasks\" />
     <Folder Include="Features\Tasks\Queries\GetFilteredTasks\" />

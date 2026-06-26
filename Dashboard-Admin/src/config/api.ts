@@ -7,7 +7,6 @@ export const api: AxiosInstance = axios.create({
   },
   withCredentials: true, 
 })
-console.log("api", api)
 
 api.interceptors.response.use(
   (response) => response,

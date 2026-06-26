@@ -1,4 +1,3 @@
-using FinTasker.Domain.Enums;
 
 namespace FinTasker.Application.Common.Models
 {
@@ -9,7 +8,7 @@ namespace FinTasker.Application.Common.Models
         public string? Search { get; init; }
         public string? SortBy { get; init; }
         public bool SortDescending { get; init; } = false;
-        public StatusProjects? Status { get; init; }
+        
     }
 
 }

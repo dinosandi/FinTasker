@@ -12,7 +12,7 @@ namespace FinTasker.Application.Common.Interfaces.Repository
         // Task<IEnumerable<Tasks>> GetAllTasksAsync();
         // Task UpdateTaskAsync(Tasks task);
         Task DeleteTaskAsync(Tasks task, CancellationToken ct = default);
-
+        Task BulkDeleteTasksAsync(IEnumerable<Tasks> tasks, CancellationToken ct = default);
         Task UpdateTaskAsync(Tasks task, CancellationToken ct = default);
         
     }

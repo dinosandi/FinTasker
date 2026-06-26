@@ -1,5 +1,5 @@
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,18 +7,24 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependencies
+node_modules/
 
+# Build output
+dist/
+dist-ssr/
+
+# Local files
+*.local
 .env
+.env.*
+!.env.example
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -27,8 +33,8 @@ dist-ssr
 *.sw?
 
 # Test coverage
-/coverage
+coverage/
 
-# Vitest artifacts (browser screenshots/attachments)
+# Vitest artifacts
 **/__screenshots__/
 .vitest-attachments/

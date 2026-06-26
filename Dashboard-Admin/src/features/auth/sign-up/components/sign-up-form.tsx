@@ -80,10 +80,14 @@ export function SignUpForm({
         {
           loading: 'Creating account...',
   
-          success: (response) => {
-            return response.message || `Account created for ${data.email}.`
-          },
-  
+          success: (response) => ({
+            message: response.message || `Account created for ${data.email}.`,
+            style: {
+              background: '#22c55e',
+              color: '#fff',
+              border: '1px solid #16a34a',
+            },
+          }),      
           error: (error: any) => {
             return (
               error?.response?.data?.message ||

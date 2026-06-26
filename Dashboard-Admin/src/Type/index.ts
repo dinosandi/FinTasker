@@ -20,6 +20,7 @@ export interface GoogleLogin {
 
 // Projects
 export interface Project {
+    Id : string;
     UsersId: string; // nanti ambil dari token/login user
     Name: string;
     Description: string;
@@ -34,6 +35,33 @@ export enum ProjectStatus {
     Completed,
     Cancelled
 }
+
+export interface ProjectResponse {
+    id: string;
+    name: string;
+    description: string;
+    status: ProjectStatus;
+    color: string;
+    startDate: string;
+    endDate: string;
+    updatedAt: string;
+    createdAt: string;
+  }
+export interface ProjectQueryParams{
+    page: number;
+    pageSize: number;
+    search: string;
+}
+
+export interface CreateProject {
+    name: string;
+    description: string;
+    status: ProjectStatus;
+    color: string;
+    startDate: Date;
+    endDate: Date;
+}
+
 
 // Tasks
 export interface Tasks {

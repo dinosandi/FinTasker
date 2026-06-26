@@ -57,12 +57,10 @@ export function UserAuthForm({
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      console.log('[1] mutateAsync start')
       await loginMutation.mutateAsync({
         email: data.email,
         password: data.passwordHash,
       })
-      console.log('[2] mutateAsync done')
 
       queryClient.removeQueries({ queryKey: ME_QUERY_KEY })
       const user = await queryClient.fetchQuery({
@@ -73,14 +71,13 @@ export function UserAuthForm({
         },
         staleTime: 0,
       })
-
-      console.log('[3] /me fetched, invalidating router')
-
       useAuthStore.getState().setUser(user)
-
-      console.log('[4] router invalidated, navigating to:', redirectTo || '/')
-
-      toast.success('Login successful')
+      toast.success('Login successful', {
+        style: {
+          background: '#22c55e',
+          color: '#fff',
+        },
+      });
 
       await navigate({ to: redirectTo || '/', replace: true }) // ← ini yang hilang
       console.log('[5] navigate called')
@@ -180,8 +177,13 @@ export function UserAuthForm({
                 })
 
                 useAuthStore.getState().setUser(user)
+                toast.success('Login successful', {
+                  style: {
+                    background: '#22c55e',
+                    color: '#fff',
+                  },
+                });
 
-                toast.success('Login successful')
                 await navigate({ to: redirectTo || '/', replace: true })
               } catch (error) {
                 useAuthStore.getState().reset()

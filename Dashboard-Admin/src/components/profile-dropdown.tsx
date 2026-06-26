@@ -20,11 +20,8 @@ export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()
 
   const logout = usePostLogout()
-
-  // ambil dari store — sudah di-set saat beforeLoad, tidak perlu fetch ulang
   const user = useAuthStore((s) => s.user)
 
-  // Buat inisial avatar dari nama user
   const getInitials = (name: string) =>
     name
       .split(' ')
@@ -41,10 +38,10 @@ export function ProfileDropdown() {
             <Avatar className='h-8 w-8'>
               <AvatarImage
                 src={user?.avatarUrl ?? ''}
-                alt={user?.Name ?? 'User'}
+                alt={user?.name ?? 'User'}
               />
               <AvatarFallback>
-                {user?.Name ? getInitials(user.Name) : 'U'}
+                {user?.name ? getInitials(user.name) : 'U'}
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -53,12 +50,12 @@ export function ProfileDropdown() {
         <DropdownMenuContent className='w-56' align='end' forceMount>
           <DropdownMenuLabel className='font-normal'>
             <div className='flex flex-col gap-1.5'>
-              {/* ambil data dari store */}
+             
               <p className='text-sm leading-none font-medium'>
-                {user?.Name ?? '-'}
+                {user?.name ?? '-'}
               </p>
               <p className='text-xs leading-none text-muted-foreground'>
-                {user?.Email ?? '-'}
+                {user?.email ?? '-'}
               </p>
             </div>
           </DropdownMenuLabel>
@@ -70,12 +67,6 @@ export function ProfileDropdown() {
               <Link to='/settings'>
                 Profile
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to='/settings'>
-                Billing
-                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
