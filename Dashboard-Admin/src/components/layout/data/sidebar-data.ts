@@ -15,34 +15,17 @@ import {
   Wrench,
   UserCog,
   AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
+import { APP_CONFIG } from '@/config/app'
 
 export const sidebarData: SidebarData = {
   user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
+    name: APP_CONFIG.name,
+    email: `Version ${APP_CONFIG.version}`,
     avatar: '/avatars/shadcn.jpg',
   },
-  teams: [
-    {
-      name: 'FinTasker',
-      logo: Command,
-      plan: 'Vite + ShadcnUI',
-    },
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-  ],
+
   navGroups: [
     {
       title: 'Page',
@@ -59,7 +42,7 @@ export const sidebarData: SidebarData = {
         },
         {
           title: 'Finance',
-          url: '/Finance',
+          url: '/finance',
           icon: ListTodo,
         },
         {

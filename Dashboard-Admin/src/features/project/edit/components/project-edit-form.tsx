@@ -121,9 +121,6 @@ export function EditProjectForm({
             <p className='truncate text-sm font-semibold leading-tight text-foreground'>
               {watchedName || 'Project name'}
             </p>
-            <p className='text-xs text-muted-foreground'>
-              {project.id ?? '—'}
-            </p>
           </div>
 
           {currentStatus && (
