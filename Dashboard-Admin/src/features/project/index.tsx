@@ -14,12 +14,10 @@ import { ProjectsTable } from './components/projects-table'
 export function Projects() {
 const [page, setPage] = useState(1)
 const [pageSize, setPageSize] = useState(10)
-const [search, setSearch] = useState('')
 
 const { data, isLoading, isError } = useAllProjects({
   page,
   pageSize,
-  search,
 })
   const meta = data?.meta
   const projects = (data?.data ?? []).map((project) => ({

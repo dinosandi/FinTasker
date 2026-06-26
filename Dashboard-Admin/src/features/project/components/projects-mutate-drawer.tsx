@@ -296,8 +296,13 @@ export function ProjectsMutateDrawer({
                       placeholder='Enter project description...'
                       className='resize-y'
                       disabled={isPending}
+                      maxLength={350}
                     />
                   </FormControl>
+                  <div className="text-sm text-muted-foreground text-right">
+        {(field.value?.length ?? 0)}/350
+      </div>
+      
                   <FormMessage />
                 </FormItem>
               )}

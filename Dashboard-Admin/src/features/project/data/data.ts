@@ -10,31 +10,47 @@ export const statuses = [
     label: 'Not Started',
     value: 'NotStarted',
     icon: Circle,
-    color: '#000000',
-    bgColor: '#9B99F520',
+    color: '#ffff',
+    bgColor: '#9a9393',
   },
   {
     label: 'In Progress',
     value: 'InProgress',
     icon: Timer,
-    color: '#000000',
+    color: '#ffff',
     bgColor: '#FFD500',
   },
   {
     label: 'Completed',
     value: 'Completed',
     icon: CheckCircle,
-    color: '#000000',
+    color: '#ffff',
     bgColor: '#09bd2e',
   },
   {
     label: 'Canceled',
     value: 'Cancelled',
     icon: CircleOff,
-    color: '#000000',
+    color: '#fff',
     bgColor: '#dd3131',
   },
 ] as const
+
+export const PROJECT_COLORS = [
+  '#0052CC', // Jira Blue
+  '#00B8D9', // Cyan
+  '#36B37E', // Green
+  '#FF5630', // Red
+  '#FF8B00', // Orange
+  '#6554C0', // Purple
+  '#00875A', // Dark Green
+  '#403294', // Dark Purple
+  '#0065FF', // Bright Blue
+  '#DE350B', // Dark Red
+  '#FF991F', // Amber
+  '#8777D9', // Lavender
+]
+
 
 export const statusField = [
   {

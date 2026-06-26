@@ -4,7 +4,10 @@ import { z } from "zod";
 export const projectSchema = z.object({
   id: z.string(),
   name: z.string(),
-  description: z.string(),
+  description: z
+  .string()
+  .max(350, "Description cannot exceed 350 characters")
+  .optional(),
   status: z.string(),
   color: z.string(),
   startDate: z.string(),

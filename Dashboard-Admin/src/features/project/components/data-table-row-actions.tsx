@@ -1,6 +1,9 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { useNavigate } from '@tanstack/react-router'
 import { type Row } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
+import { Eye } from 'lucide-react'
+import { SquarePen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -22,6 +25,7 @@ export function DataTableRowActions<TData>({
 }: DataTableRowActionsProps<TData>) {
   const project = projectSchema.parse(row.original)
   const { setOpen, setCurrentRow } = useProjects()
+  const navigate = useNavigate()
 
   return (
     <DropdownMenu modal={false}>
@@ -31,18 +35,44 @@ export function DataTableRowActions<TData>({
           className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
         >
           <DotsHorizontalIcon className='h-4 w-4' />
-          <span className='sr-only'>Open menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-40'>
+
+      <DropdownMenuContent align='end' className='w-44'>
+        <DropdownMenuItem
+          onClick={() =>
+            navigate({
+              to: '/projects/$projectId',
+              params: {
+                projectId: project.id,
+              },
+            })
+          }
+        >
+          Details
+          <DropdownMenuShortcut>
+            <Eye size={16} />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(project)
-            setOpen('update')
+            navigate({
+              to: '/projects/$projectId/edit',
+              params: {
+                projectId: project.id,
+              },
+            })
           }}
         >
           Edit
+          <DropdownMenuShortcut>
+            <SquarePen size={16} />
+          </DropdownMenuShortcut>
         </DropdownMenuItem>
+
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
