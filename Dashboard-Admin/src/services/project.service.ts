@@ -14,9 +14,7 @@ export const projectService = {
     pageSize,
     search,
   }: GetProjectsParams) => {
-    const response = await api.get<
-      ApiResponse<ProjectResponse[]>
-    >("/project", {
+    const response = await api.get<ApiResponse<ProjectResponse[]>>("/project", {
       params: {
         Page: page,
         PageSize: pageSize,

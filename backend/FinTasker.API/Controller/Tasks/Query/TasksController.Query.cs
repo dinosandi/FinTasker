@@ -25,31 +25,15 @@ namespace FinTasker.API.Controller.Tasks.Query
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResult<TaskFilteredDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetFilteredTasks(
-            [FromQuery] Guid? projectId,
-            [FromQuery] StatusTask? status,
-            [FromQuery] TaskPriority? priority,
-            [FromQuery] string? tag,
-            [FromQuery] string? search,
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10,
-            CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<List<TaskFilteredDto>>>> GetFilteredTasks(
+    [FromQuery] GetFilteredTasksQuery query,   
+    CancellationToken ct)
         {
-            var query = new GetFilteredTasksQuery
-            {
-                ProjectId = projectId,
-                Status = status,
-                Priority = priority,
-                Tag = tag,
-                Search = search,
-                Page = page,
-                PageSize = pageSize
-            };
-
-            var result = await _mediator.Send(query, cancellationToken);
-
+            var result = await _mediator.Send(query, ct);
             return Ok(result);
         }
+
+
 
         [HttpGet("distribution")]
         [ProducesResponseType(typeof(ApiResponse<TasksDistributionDto>), StatusCodes.Status200OK)]

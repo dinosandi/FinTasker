@@ -79,14 +79,30 @@ export interface ProjectDetail {
 export interface Task {
     id: string
     projectId: string
+    projectName: string
     title: string
     description: string
     status: TaskStatus
     priority: TaskPriority
     dueDate: string
-    completedAt: string
-    estimed_Minutes: number
-}
+    completedAt: string | null
+    estimatedMinutes: number
+  
+    createdAt: string
+    updatedAt: string
+  
+    checklists: []
+    tags: []
+    timeLogs: []
+    activities: []
+    pomodoroSessions: []
+    resources: []
+  
+    totalChecklistItems: number
+    completedChecklistItems: number
+    totalLoggedMinutes: number
+    totalPomodoroMinutes: number
+  }
 
 export enum TaskStatus {
     ToDo,

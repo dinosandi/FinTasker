@@ -39,7 +39,7 @@ const { data, isLoading, isError } = useAllProjects({
           <div>
             <div className='flex items-center gap-3'>
               <div
-                className='h-4 w-4 rounded-md border border-border'
+                className='h-8 w-1 rounded-md border border-border'
                 style={{ backgroundColor: '#FFD500' }}
               />
 
