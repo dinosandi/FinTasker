@@ -6,20 +6,7 @@ export const tasksSchema = z.object({
     projectName : z.string(),
     title: z.string(),
     description: z.string(),
-    status: z.enum([
-        "Todo",
-        "InProgress",
-        "Review",
-        "Completed",
-        "Cancelled",
-      ]),
-    
-      priority: z.enum([
-        "Low",
-        "Medium",
-        "High",
-        "Critical",
-      ]),    
+    status:z.string(),   
     dueDate: z.string(),
     completedAt: z.string().nullable(),
     estimatedMinutes: z.number(),

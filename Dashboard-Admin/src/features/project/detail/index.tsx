@@ -10,24 +10,25 @@ import { TasksPrimaryButtons } from './components/tasks-primary-buttons'
 import { TasksProvider } from './components/tasks-provider'
 import { TasksTable } from './components/tasks-table'
 import { ProjectsEmptyState } from '../components/projects-empty-state'
+import { Route } from '@/routes/_authenticated/projects/$projectId'
 
 export function Tasks() {
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
+    const { projectId } = Route.useParams()
     
     const { data, isLoading, isError } = useTasksById({
         projectId,
         page,
         pageSize,
-        searsch,
         status,
     }) 
 
     const meta = data?.meta
-    const tasks = (data?.data ?? []).map((tasks) => ({
-      ...tasks,
-      status: tasks.status.toString(),
-    }))
+    const tasks = data?.data?.map(task => ({
+        ...task,
+        status: String(task.status),
+    })) ?? []
 
     return (
         <TasksProvider>

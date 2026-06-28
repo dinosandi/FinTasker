@@ -17,14 +17,7 @@ export const useTasksById = ({
   status,
 }: UseTasksByIdProps) => {
   return useQuery({
-    queryKey: [
-      'tasks',
-      projectId,
-      page,
-      pageSize,
-      search,
-      status,
-    ],
+    queryKey: ['tasks', projectId, page, pageSize, search, status],
 
     queryFn: () =>
       taskService.getAll({
@@ -37,6 +30,6 @@ export const useTasksById = ({
 
     enabled: !!projectId,
 
-    placeholderData: previousData => previousData,
+    placeholderData: (previousData) => previousData,
   })
 }

@@ -10,7 +10,6 @@ const projectSearchSchema = z.object({
         .array(z.enum(statuses.map((status) => status.value)))
         .optional()
         .catch([]),
-    filter: z.string().optional().catch(''),
 })
 export const Route = createFileRoute('/_authenticated/projects/')({
   validateSearch: projectSearchSchema,

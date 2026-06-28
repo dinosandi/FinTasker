@@ -10,7 +10,7 @@ const taskSearchSchema = z.object({
     .array(z.enum(TASK_STATUS.map((status) => status.value)))
     .optional()
     .catch([]),
-  filter: z.string().optional().catch(''),
+    search: z.string().optional().catch(''),
 })
 
 export const Route = createFileRoute('/_authenticated/projects/$projectId/')({
