@@ -1,36 +1,44 @@
-import React, { useState } from 'react'
-import useDialogState from '@/hooks/use-dialog-state'
-import { type Task } from '../data/shema' 
+'use client'
 
-type TasksDialogType = 'create' | 'update' | 'delete' | 'import'
+import React, { createContext, useContext, useState } from 'react'
+import { Task } from '../data/shema' 
 
-type TasksContextType = {
+type TasksDialogType = 'create' | 'edit' | 'delete' | 'import' | 'bulk-delete'
+
+interface TasksContextType {
   open: TasksDialogType | null
-  setOpen: (str: TasksDialogType | null) => void
-  currentRow: Task | null
-  setCurrentRow: React.Dispatch<React.SetStateAction<Task | null>>
+  setOpen: (type: TasksDialogType | null) => void
+  currentTask: Task | null
+  setCurrentTask: (task: Task | null) => void
+  selectedTasks: Task[]
+  setSelectedTasks: (tasks: Task[]) => void
 }
 
-const TasksContext = React.createContext<TasksContextType | null>(null)
+const TasksContext = createContext<TasksContextType | undefined>(undefined)
 
 export function TasksProvider({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useDialogState<TasksDialogType>(null)
-  const [currentRow, setCurrentRow] = useState<Task | null>(null)
+  const [open, setOpen] = useState<TasksDialogType | null>(null)
+  const [currentTask, setCurrentTask] = useState<Task | null>(null)
+  const [selectedTasks, setSelectedTasks] = useState<Task[]>([])
 
   return (
-    <TasksContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <TasksContext.Provider
+      value={{
+        open,
+        setOpen,
+        currentTask,
+        setCurrentTask,
+        selectedTasks,
+        setSelectedTasks,
+      }}
+    >
       {children}
-    </TasksContext>
+    </TasksContext.Provider>
   )
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const useTasks = () => {
-  const tasksContext = React.useContext(TasksContext)
-
-  if (!tasksContext) {
-    throw new Error('useTasks has to be used within <TasksContext>')
-  }
-
-  return tasksContext
+export function useTasks() {
+  const context = useContext(TasksContext)
+  if (!context) throw new Error('useTasks must be used within TasksProvider')
+  return context
 }

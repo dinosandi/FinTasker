@@ -1,179 +1,129 @@
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+'use client'
+
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { SelectDropdown } from '@/components/select-dropdown'
-import { type Task } from '../data/shema' 
-import { TASK_STATUS } from '../data/data'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useTasks } from './tasks-provider'
+import { TASK_STATUS, TASK_PRIORITY } from '../data/data'
 
-type TaskMutateDrawerProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  currentRow?: Task
-}
-
-const formSchema = z.object({
-  projectId : z.string(),
-  title: z.string().min(1, 'Title is required.'),
-  description: z.string().min(1, 'Description is required.'),
-  dueDate: z.string().min(1, 'Due date is required.'),
-  estimatedMinutes: z.number().min(1, 'Estimated minutes is required.'),
-  status: z.string().min(1, 'Please select a status.'),
-  priority: z.string().min(1, 'Please choose a priority.'),
-  completedAt: z.string().nullable(),
-
-})
-type TaskForm = z.infer<typeof formSchema>
-
-export function TasksMutateDrawer({
-  open,
-  onOpenChange,
-  currentRow,
-}: TaskMutateDrawerProps) {
-  const isUpdate = !!currentRow
-
-  const form = useForm<TaskForm>({
-    resolver: zodResolver(formSchema),
-    defaultValues: currentRow ?? {
-      title: '',
-      status: '',
-      description: '',
-      dueDate: '',
-      estimatedMinutes: 0,
-      completedAt: '',
-      priority: '',
-    },
-  })
-
-  const onSubmit = (data: TaskForm) => {
-    // do something with the form data
-    onOpenChange(false)
-    form.reset()
-    showSubmittedData(data)
-  }
+export function TasksMutateDrawer() {
+  const { open, setOpen, currentTask } = useTasks()
+  const isEdit = open === 'edit'
+  const isOpen = open === 'create' || open === 'edit'
 
   return (
-    <Sheet
-      open={open}
-      onOpenChange={(v) => {
-        onOpenChange(v)
-        form.reset()
-      }}
-    >
-      <SheetContent className='flex flex-col'>
-        <SheetHeader className='text-start'>
-          <SheetTitle>{isUpdate ? 'Update' : 'Create'} Task</SheetTitle>
+    <Sheet open={isOpen} onOpenChange={(v) => !v && setOpen(null)}>
+      <SheetContent className='sm:max-w-[480px] overflow-y-auto'>
+        <SheetHeader className='mb-6'>
+          <SheetTitle>{isEdit ? 'Edit Task' : 'Create Task'}</SheetTitle>
           <SheetDescription>
-            {isUpdate
-              ? 'Update the task by providing necessary info.'
-              : 'Add a new task by providing necessary info.'}
-            Click save when you&apos;re done.
+            {isEdit
+              ? 'Update the task details below.'
+              : 'Fill in the details to create a new task.'}
           </SheetDescription>
         </SheetHeader>
-        <Form {...form}>
-          <form
-            id='tasks-form'
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='flex-1 space-y-6 overflow-y-auto px-4'
-          >
-            <FormField
-              control={form.control}
-              name='title'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder='Enter a title' />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+
+        <div className='flex flex-col gap-5'>
+          <div className='flex flex-col gap-1.5'>
+            <Label htmlFor='title'>Title <span className='text-destructive'>*</span></Label>
+            <Input
+              id='title'
+              placeholder='Task title'
+              defaultValue={currentTask?.title}
+              className='h-9'
             />
-            <FormField
-              control={form.control}
-              name='status'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <SelectDropdown
-                    defaultValue={field.value}
-                    onValueChange={field.onChange}
-                    placeholder='Select status'
-                    items={TASK_STATUS.map((item) => ({
-                      label: item.label,
-                      value: item.value,
-                    }))}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+
+          <div className='flex flex-col gap-1.5'>
+            <Label htmlFor='description'>Description</Label>
+            <Textarea
+              id='description'
+              placeholder='Describe the task…'
+              defaultValue={currentTask?.description}
+              rows={3}
+              className='resize-none text-sm'
             />
-            <FormField
-              control={form.control}
-              name='priority'
-              render={({ field }) => (
-                <FormItem className='relative'>
-                  <FormLabel>Priority</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className='flex flex-col space-y-1'
-                    >
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='high' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>High</FormLabel>
-                      </FormItem>
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='medium' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>Medium</FormLabel>
-                      </FormItem>
-                      <FormItem className='flex items-center'>
-                        <FormControl>
-                          <RadioGroupItem value='low' />
-                        </FormControl>
-                        <FormLabel className='font-normal'>Low</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
-        <SheetFooter className='gap-2'>
-          <SheetClose asChild>
-            <Button variant='outline'>Close</Button>
-          </SheetClose>
-          <Button form='tasks-form' type='submit'>
-            Save changes
-          </Button>
-        </SheetFooter>
+          </div>
+
+          <div className='grid grid-cols-2 gap-4'>
+            <div className='flex flex-col gap-1.5'>
+              <Label>Status</Label>
+              <Select defaultValue={currentTask?.status ?? 'ToDo'}>
+                <SelectTrigger className='h-9 text-sm'>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TASK_STATUS.map((s) => (
+                    <SelectItem key={s.value} value={s.value} className='text-sm'>
+                      {s.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className='flex flex-col gap-1.5'>
+              <Label>Priority</Label>
+              <Select defaultValue={currentTask?.priority ?? 'Medium'}>
+                <SelectTrigger className='h-9 text-sm'>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TASK_PRIORITY.map((p) => (
+                    <SelectItem key={p.value} value={p.value} className='text-sm'>
+                      {p.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className='grid grid-cols-2 gap-4'>
+            <div className='flex flex-col gap-1.5'>
+              <Label htmlFor='dueDate'>Due Date</Label>
+              <Input
+                id='dueDate'
+                type='date'
+                defaultValue={currentTask?.dueDate?.slice(0, 10)}
+                className='h-9 text-sm'
+              />
+            </div>
+
+            <div className='flex flex-col gap-1.5'>
+              <Label htmlFor='estimate'>Estimate (minutes)</Label>
+              <Input
+                id='estimate'
+                type='number'
+                placeholder='e.g. 60'
+                defaultValue={currentTask?.estimatedMinutes}
+                className='h-9 text-sm'
+              />
+            </div>
+          </div>
+
+          <div className='flex justify-end gap-2 pt-2'>
+            <Button variant='outline' size='sm' onClick={() => setOpen(null)}>
+              Cancel
+            </Button>
+            <Button size='sm'>{isEdit ? 'Save changes' : 'Create task'}</Button>
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
   )

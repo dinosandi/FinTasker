@@ -28,7 +28,7 @@ import { DataTableBulkActions } from './data-table-bulk-actions'
 import { tasksColumns as columns } from './tasks-columns'
 import { PaginationMeta } from '@/Type/api'
 
-const route = getRouteApi('/_authenticated/tasks/')
+const route = getRouteApi('/_authenticated/projects/$projectId/')
 
 type DataTableProps = {
   data: Task[]

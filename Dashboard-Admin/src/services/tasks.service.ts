@@ -1,6 +1,6 @@
 import { api } from '@/config/api'
 import { ApiResponse } from '@/Type/api'
-import { Task } from '@/Type'
+import { TaskResponse } from '@/Type'
 
 interface GetTasksParams {
   projectId: string
@@ -18,7 +18,7 @@ export const taskService = {
     search,
     status,
   }: GetTasksParams) => {
-    const response = await api.get<ApiResponse<Task[]>>('/tasks', {
+    const response = await api.get<ApiResponse<TaskResponse[]>>('/tasks', {
       params: {
         ProjectId: projectId,
         Page: page,

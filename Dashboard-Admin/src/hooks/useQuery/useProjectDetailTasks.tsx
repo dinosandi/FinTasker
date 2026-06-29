@@ -1,18 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/config/api";
-import { ProjectDetail } from "@/Type";
+import { taskService } from "@/services/tasks.service";
 
-export const useProjectDetail = (
-    projectId: string
-) => {
-    return useQuery<ProjectDetail>({
-        queryKey: ["project-detail", projectId],
-        queryFn: async () => {
-            const { data } = await api.get(
-                `/project/${projectId}`
-            )
-            return data.data
-        },
-        enabled: !!projectId,
-    })
+interface useAllProjectTasksProps {
+    projectId: string;
+    page: number;
+    pageSize : number;
+    search? : string;
 }
+export const useProjectDetailTasks = ({
+    projectId,
+    page,
+    pageSize,
+    search,
+} :  useAllProjectTasksProps) => {
+    return useQuery({
+        queryKey: [
+            "tasks",
+            projectId,
+            page,
+            pageSize,
+            search,
+        ],
+        queryFn: () => taskService.getAll({
+            projectId,
+            page,
+            pageSize,
+            search,
+        }),
+        placeholderData : (previousData) =>
+            previousData,
+    });
+} 

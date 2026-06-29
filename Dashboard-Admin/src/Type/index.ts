@@ -73,10 +73,10 @@ export interface ProjectDetail {
     createdAt: string
     updatedAt: string
   
-    tasks: Task[]
+    tasks: TaskResponse[]
   }
 // Tasks
-export interface Task {
+export interface TaskResponse {
     id: string
     projectId: string
     projectName: string

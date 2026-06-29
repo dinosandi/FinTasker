@@ -59,7 +59,7 @@ export function EditProject({ projectId }: EditProjectProps) {
       </Header>
 
       <Main>
-        {/* Header (Jira-like) */}
+
         <div className='sticky top-0 z-10 mb-6 border-b border-gray-200 bg-white px-4 py-3'>
           {/* Breadcrumbs */}
           <div className='flex items-center gap-2 text-xs text-gray-500'>

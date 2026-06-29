@@ -1,82 +1,71 @@
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { type Row } from '@tanstack/react-table'
-import { Trash2 } from 'lucide-react'
+'use client'
+
+import { Row } from '@tanstack/react-table'
+import { MoreHorizontal, Pencil, Trash2, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useNavigate } from '@tanstack/react-router'
-import { TASK_STATUS } from '../data/data' 
-import { tasksSchema } from '../data/shema' 
+import { Task } from '../data/shema' 
 import { useTasks } from './tasks-provider'
 
-type DataTableRowActionsProps<TData> = {
-  row: Row<TData>
+interface DataTableRowActionsProps {
+  row: Row<Task>
 }
 
-export function DataTableRowActions<TData>({
-  row,
-}: DataTableRowActionsProps<TData>) {
-  const task = tasksSchema.parse(row.original)
-  const navigate = useNavigate()
-  const { setOpen, setCurrentRow } = useTasks()
+export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+  const { setOpen, setCurrentTask } = useTasks()
 
   return (
-    <DropdownMenu modal={false}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant='ghost'
-          className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
+          className='flex h-7 w-7 p-0 data-[state=open]:bg-muted'
+          onClick={(e) => e.stopPropagation()}
         >
-          <DotsHorizontalIcon className='h-4 w-4' />
+          <MoreHorizontal size={15} />
           <span className='sr-only'>Open menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-40'>
+      <DropdownMenuContent align='end' className='w-[160px]'>
         <DropdownMenuItem
-          onClick={() => {
-            setCurrentRow(task)
-            setOpen('update')
+          className='gap-2 text-sm'
+          onClick={(e) => {
+            e.stopPropagation()
+            setCurrentTask(row.original)
+            setOpen('edit')
           }}
         >
-          Edit
+          <Eye size={14} className='text-muted-foreground' />
+          View details
         </DropdownMenuItem>
-        <DropdownMenuItem disabled>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem disabled>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.status}>
-              {TASK_STATUS.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+        <DropdownMenuItem
+          className='gap-2 text-sm'
+          onClick={(e) => {
+            e.stopPropagation()
+            setCurrentTask(row.original)
+            setOpen('edit')
+          }}
+        >
+          <Pencil size={14} className='text-muted-foreground' />
+          Edit task
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => {
-            setCurrentRow(task)
+          className='gap-2 text-sm text-destructive focus:text-destructive'
+          onClick={(e) => {
+            e.stopPropagation()
+            setCurrentTask(row.original)
             setOpen('delete')
           }}
         >
-          Delete
-          <DropdownMenuShortcut>
-            <Trash2 size={16} />
-          </DropdownMenuShortcut>
+          <Trash2 size={14} />
+          Delete task
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
