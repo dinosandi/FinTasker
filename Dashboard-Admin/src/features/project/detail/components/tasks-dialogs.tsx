@@ -1,10 +1,16 @@
-import { TasksMutateDrawer } from './tasks-mutate-drawer'
+import { useState } from 'react'
+import { TasksAddForm } from './tasks-add-form'
 import { TasksMultiDeleteDialog } from './tasks-multi-delete-dialog'
 
 export function TasksDialogs() {
+  const [open, setOpen] = useState(false)
+
   return (
     <>
-      <TasksMutateDrawer />
+      <TasksAddForm
+        open={open}
+        onOpenChange={setOpen}
+      />
       <TasksMultiDeleteDialog />
     </>
   )

@@ -35,3 +35,39 @@ export const taskListResponseSchema = z.object({
 })
 
 export type TaskListResponse = z.infer<typeof taskListResponseSchema>
+
+export const taskFormSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(200, 'Title must be 200 characters or less'),
+  description: z
+    .string()
+    .max(2000, 'Description must be 2000 characters or less')
+    .optional(),
+  status: z.enum(['ToDo', 'InProgress', 'Review', 'Completed', 'Cancelled'], {
+    error: 'Status is required',
+  }),
+  priority: z.enum(['Low', 'Medium', 'High', 'Critical'], {
+    error: 'Priority is required',
+  }),
+  dueDate: z.string().min(1, 'Due date is required'),
+  estimatedMinutes: z
+    .number({ error: 'Estimate must be a number' })
+    .min(0, 'Estimate cannot be negative')
+    .max(100000, 'Estimate is too large')
+    .optional(),
+})
+ 
+export type TaskFormValues = z.input<typeof taskFormSchema>
+ 
+export type TaskFormOutput = z.output<typeof taskFormSchema>
+ 
+export const TASK_FORM_DEFAULTS: TaskFormValues = {
+  title: '',
+  description: '',
+  status: 'ToDo',
+  priority: 'Medium',
+  dueDate: '',
+  estimatedMinutes: undefined,
+}

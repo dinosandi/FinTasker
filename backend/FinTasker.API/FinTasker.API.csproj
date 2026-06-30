@@ -28,8 +28,6 @@
     <Folder Include="Controller\Project\Command\" />
     <Folder Include="Controller\Project\Queries\" />
     <Folder Include="Controller\Tasks\" />
-    <Folder Include="Controller\Tasks\Command\" />
-    <Folder Include="Controller\Tasks\Query\" />
     <Folder Include="Hubs\" />
     <Folder Include="Middleware\" />
   </ItemGroup>

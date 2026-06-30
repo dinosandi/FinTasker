@@ -13,7 +13,6 @@ namespace FinTasker.Application.Features.Tasks.Commands.CreateTasks
         public TaskPriority Priority { get; set; } // e.g., "Low", "Medium", "High"
         public StatusTask Status { get; set; } // e.g., "To Do", "In Progress", "Done"
         public DateTimeOffset DueDate { get; set; }
-        public DateTimeOffset CompletedAt { get; set; }
         public int Estimed_Minutes { get; set; }
 
     }

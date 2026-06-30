@@ -6,8 +6,6 @@ using FinTasker.Application.Common.Interfaces.Repository;
 using FinTasker.Application.Common.Exceptions;
 using FinTasker.Domain.Enums;
 
-
-
 namespace FinTasker.Application.Features.Tasks.Commands.CreateTasks
 {
     public class CreateTasksHandler
@@ -58,7 +56,6 @@ namespace FinTasker.Application.Features.Tasks.Commands.CreateTasks
                 Status = request.Status,
                 DueDate = request.DueDate,
                 Estimed_Minutes = request.Estimed_Minutes,
-                CompletedAt = request.CompletedAt,
                 CreatedAt = DateTimeOffset.UtcNow,
                 UpdatedAt = DateTimeOffset.UtcNow,
             };

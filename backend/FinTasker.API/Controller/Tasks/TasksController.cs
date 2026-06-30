@@ -8,24 +8,26 @@ using FinTasker.Application.Features.Tasks.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FinTasker.Application.Features.Tasks.Queries;
+using FinTasker.Application.Features.Tasks.Queries.GetFilteredTasks;
 
-namespace FinTasker.API.Controller.Tasks.Command
+
+namespace FinTasker.API.Controller.Tasks
 {
-    [Route("api/tasks")]
+    [Route("api/[controller]")]
     [ApiController]
     public class TasksController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        private TasksController(IMediator mediator)
+        public TasksController(IMediator mediator)
         {
             _mediator = mediator;
         }
-
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<ApiResponse<TaskDto>>> CreateTask(
-    [FromBody] CreateTasksCommand command)
+[FromBody] CreateTasksCommand command)
         {
             var result = await _mediator.Send(command);
 
@@ -89,6 +91,29 @@ namespace FinTasker.API.Controller.Tasks.Command
 
             return result.Success ? Ok(result) : BadRequest(result);
         }
+                [Authorize]
+        [HttpGet]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResult<TaskFilteredDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<ApiResponse<List<TaskFilteredDto>>>> GetFilteredTasks(
+    [FromQuery] GetFilteredTasksQuery query,   
+    CancellationToken ct)
+        {
+            var result = await _mediator.Send(query, ct);
+            return Ok(result);
+        }
 
+        [HttpGet("distribution")]
+        [ProducesResponseType(typeof(ApiResponse<TasksDistributionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetTasksDistribution(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetTasksDistributionQuery(), cancellationToken);
+
+            return Ok(ApiResponse<TasksDistributionDto>.Ok(
+                data: result,
+                message: "Successfully retrieved tasks distribution."
+            ));
+        }
     }
 }

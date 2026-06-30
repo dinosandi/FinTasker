@@ -1,4 +1,3 @@
-
 export interface RegisterUser {
     email: string;
     passwordHash: string;
@@ -15,8 +14,6 @@ export enum Role {
 export interface GoogleLogin {
     idToken: string;
 }
-
-
 
 // Projects
 export interface Project {
@@ -118,3 +115,15 @@ export enum TaskPriority {
     High,
     Critical
 }
+
+export interface Task {
+    projectId: string
+    title: string
+    description: string
+    priority: number
+    status: number
+    dueDate: string
+    completedAt?: string
+    estimed_Minutes: number
+  }
+  

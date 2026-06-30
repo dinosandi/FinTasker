@@ -1,31 +1,28 @@
 'use client'
 
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Plus, Upload } from 'lucide-react'
-import { useTasks } from './tasks-provider'
+import { Plus } from 'lucide-react'
+import { TasksAddForm } from './tasks-add-form'
 
 export function TasksPrimaryButtons() {
-  const { setOpen } = useTasks()
+  const [addOpen, setAddOpen] = useState(false)
 
   return (
-    <div className='flex items-center gap-2'>
-      <Button
-        variant='outline'
-        size='sm'
-        className='h-8 gap-1.5 text-xs'
-        onClick={() => setOpen('import')}
-      >
-        <Upload size={13} />
-        Import
-      </Button>
-      <Button
-        size='sm'
-        className='h-8 gap-1.5 text-xs'
-        onClick={() => setOpen('create')}
-      >
-        <Plus size={13} />
-        Create Task
-      </Button>
-    </div>
+    <>
+      <div className='flex items-center gap-2'>
+     
+        <Button
+          size='sm'
+          className='space-x-1 bg-[#ffd500] hover:bg-[#e6bf00] text-black'
+          onClick={() => setAddOpen(true)}
+        >
+          <Plus size={18} />
+          Task
+        </Button>
+      </div>
+
+      <TasksAddForm open={addOpen} onOpenChange={setAddOpen} />
+    </>
   )
 }
