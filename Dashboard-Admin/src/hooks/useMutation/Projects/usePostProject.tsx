@@ -19,7 +19,7 @@ export const usePostProject = () => {
 
     , onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['projects'],
+        queryKey: ['projects']
       })
     }
   })

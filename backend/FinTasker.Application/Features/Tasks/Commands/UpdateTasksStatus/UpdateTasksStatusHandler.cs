@@ -79,7 +79,7 @@ namespace FinTasker.Application.Features.Tasks.Commands.UpdateTasksStatus
 
             // ── 8. Trigger notification 
             var notifTitle = request.Status == StatusTask.Completed
-                ? "Task Completed 🎉"
+                ? "Task Completed"
                 : "Task Status Updated";
 
             var notifMessage = request.Status == StatusTask.Completed

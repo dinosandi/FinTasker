@@ -56,6 +56,7 @@ export const projectsColumns: ColumnDef<Project>[] = [
       tdClassName: 'ps-4',
     }, 
   },
+  
   {
     accessorKey: 'startDate',
     header: ({ column }) => (

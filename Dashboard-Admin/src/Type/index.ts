@@ -1,4 +1,3 @@
-
 export interface RegisterUser {
     email: string;
     passwordHash: string;
@@ -15,8 +14,6 @@ export enum Role {
 export interface GoogleLogin {
     idToken: string;
 }
-
-
 
 // Projects
 export interface Project {
@@ -62,20 +59,47 @@ export interface CreateProject {
     endDate: Date;
 }
 
-
+export interface ProjectDetail {
+    id: string
+    name: string
+    description: string
+    status: ProjectStatus
+    color: string
+    startDate: string
+    endDate: string
+    createdAt: string
+    updatedAt: string
+  
+    tasks: TaskResponse[]
+  }
 // Tasks
-export interface Tasks {
-    ProjectId: string;
-    Title: string;
-    Description: string;
-    Status: TaskStatus;
-    Priority: TaskPriority;
-    DueDate: string;
-    CompletedAt : string;
-    Estimed_Minutes : number;
-    UpdatedAt : string;
-    CreatedAt : string;
-}
+export interface TaskResponse {
+    id: string
+    projectId: string
+    projectName: string
+    title: string
+    description: string
+    status: TaskStatus
+    priority: TaskPriority
+    dueDate: string
+    completedAt: string | null
+    estimatedMinutes: number
+  
+    createdAt: string
+    updatedAt: string
+  
+    checklists: []
+    tags: []
+    timeLogs: []
+    activities: []
+    pomodoroSessions: []
+    resources: []
+  
+    totalChecklistItems: number
+    completedChecklistItems: number
+    totalLoggedMinutes: number
+    totalPomodoroMinutes: number
+  }
 
 export enum TaskStatus {
     ToDo,
@@ -91,3 +115,15 @@ export enum TaskPriority {
     High,
     Critical
 }
+
+export interface Task {
+    projectId: string
+    title: string
+    description: string
+    priority: number
+    status: number
+    dueDate: string
+    completedAt?: string
+    estimed_Minutes: number
+  }
+  
