@@ -29,7 +29,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           onClick={(e) => e.stopPropagation()}
         >
           <MoreHorizontal size={15} />
-          <span className='sr-only'>Open menu</span>
+
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[160px]'>

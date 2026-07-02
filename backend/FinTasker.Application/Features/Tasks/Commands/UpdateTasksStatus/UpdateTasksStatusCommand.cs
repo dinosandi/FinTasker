@@ -5,7 +5,6 @@ using MediatR;
 
 namespace FinTasker.Application.Features.Tasks.Commands.UpdateTasksStatus
 {
-
     public record UpdateTasksStatusCommand(
         Guid Id,
         StatusTask Status

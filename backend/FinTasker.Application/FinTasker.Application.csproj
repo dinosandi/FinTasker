@@ -31,6 +31,7 @@
     <Folder Include="Features\Projects\Queries\GetByIdProject\" />
     <Folder Include="Features\Tasks\Commands\BulkDeleted\" />
     <Folder Include="Features\Tasks\Commands\DeleteTasks\" />
+    <Folder Include="Features\Tasks\Commands\UpdateTasksPriority\" />
     <Folder Include="Features\Tasks\Commands\UpdateTasksStatus\" />
     <Folder Include="Features\Tasks\Commands\UpdateTasks\" />
     <Folder Include="Features\Tasks\DTOs\" />

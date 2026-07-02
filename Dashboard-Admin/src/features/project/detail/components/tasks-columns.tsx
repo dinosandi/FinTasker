@@ -1,17 +1,18 @@
 'use client'
 
-import { ColumnDef } from '@tanstack/react-table'
-import { Checkbox } from '@/components/ui/checkbox'
 import { format } from 'date-fns'
-import { Task } from '../data/shema' 
-import { TASK_STATUS, TASK_PRIORITY } from '../data/data'
-import { DataTableRowActions } from './data-table-row-actions'
-import { cn } from '@/lib/utils'
+import { ColumnDef } from '@tanstack/react-table'
 import { AlertTriangle, CalendarClock } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Checkbox } from '@/components/ui/checkbox'
+import { TASK_STATUS, TASK_PRIORITY } from '../data/data'
+import { Task } from '../data/shema'
+import { DataTableRowActions } from './data-table-row-actions'
 
 function StatusBadge({ status }: { status: string }) {
   const found = TASK_STATUS.find((s) => s.value === status)
-  if (!found) return <span className='text-muted-foreground text-xs'>{status}</span>
+  if (!found)
+    return <span className='text-xs text-muted-foreground'>{status}</span>
   const Icon = found.icon
   return (
     <span
@@ -27,7 +28,8 @@ function StatusBadge({ status }: { status: string }) {
 function PriorityBadge({ priority }: { priority?: string }) {
   if (!priority) return null
   const found = TASK_PRIORITY.find((p) => p.value === priority)
-  if (!found) return <span className='text-muted-foreground text-xs'>{priority}</span>
+  if (!found)
+    return <span className='text-xs text-muted-foreground'>{priority}</span>
   const Icon = found.icon
   return (
     <span
@@ -41,11 +43,12 @@ function PriorityBadge({ priority }: { priority?: string }) {
 }
 
 function DueDateCell({ dueDate, status }: { dueDate: string; status: string }) {
-  if (!dueDate) return <span className='text-muted-foreground text-xs'>—</span>
+  if (!dueDate) return <span className='text-xs text-muted-foreground'>—</span>
 
   const due = new Date(dueDate)
   const now = new Date()
-  const isOverdue = due < now && status !== 'Completed' && status !== 'Cancelled'
+  const isOverdue =
+    due < now && status !== 'Completed' && status !== 'Cancelled'
   const isDueSoon =
     !isOverdue &&
     due.getTime() - now.getTime() < 2 * 24 * 60 * 60 * 1000 &&
@@ -98,18 +101,22 @@ export const tasksColumns: ColumnDef<Task>[] = [
     accessorKey: 'title',
     header: 'Task',
     cell: ({ row }) => (
-      <div className='flex flex-col gap-0.5 max-w-[320px]'>
-        <span className='truncate font-medium text-sm text-foreground leading-snug'>
+      <div className='flex max-w-[320px] flex-col gap-0.5'>
+        <span className='truncate text-sm leading-snug font-medium text-foreground'>
           {row.getValue('title')}
         </span>
-        {row.original.description && (
-          <span className='truncate text-xs text-muted-foreground leading-snug'>
-            {row.original.description}
-          </span>
-        )}
       </div>
     ),
     enableSorting: true,
+  },
+  {
+    accessorKey: 'description',
+    header: 'Description',
+    cell: ({ row }) => (
+      <span className='truncate text-xs leading-snug text-muted-foreground'>
+        {row.getValue('description')}
+      </span>
+    ),
   },
   {
     accessorKey: 'status',
@@ -145,12 +152,13 @@ export const tasksColumns: ColumnDef<Task>[] = [
     header: 'Estimate',
     cell: ({ row }) => {
       const mins: number = row.getValue('estimatedMinutes')
-      if (!mins) return <span className='text-muted-foreground text-xs'>—</span>
+      if (!mins) return <span className='text-xs text-muted-foreground'>—</span>
       const h = Math.floor(mins / 60)
       const m = mins % 60
       return (
         <span className='text-xs text-muted-foreground tabular-nums'>
-          {h > 0 ? `${h}h ` : ''}{m > 0 ? `${m}m` : ''}
+          {h > 0 ? `${h}h ` : ''}
+          {m > 0 ? `${m}m` : ''}
         </span>
       )
     },
@@ -161,6 +169,19 @@ export const tasksColumns: ColumnDef<Task>[] = [
     header: 'Created',
     cell: ({ row }) => {
       const date = row.getValue('createdAt') as string
+      return (
+        <span className='text-xs text-muted-foreground tabular-nums'>
+          {date ? format(new Date(date), 'dd MMM yyyy') : '—'}
+        </span>
+      )
+    },
+    enableSorting: true,
+  },
+  {
+    accessorKey: 'completedAt',
+    header: 'Completed',
+    cell: ({ row }) => {
+      const date = row.getValue('completedAt') as string
       return (
         <span className='text-xs text-muted-foreground tabular-nums'>
           {date ? format(new Date(date), 'dd MMM yyyy') : '—'}
