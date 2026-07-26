@@ -9,6 +9,10 @@ interface GetTasksParams {
   search?: string
   status?: string
 }
+interface BulkDeleteResponse {
+  deletedCount: number
+}
+
 
 export const taskService = {
   getAll: async ({
@@ -30,4 +34,13 @@ export const taskService = {
 
     return response.data
   },
+  bulkDelete: async (TaskIds: string[]) => {
+    const response = await api.delete<ApiResponse<BulkDeleteResponse>>(
+      '/Tasks/bulk',
+      { data: { TaskIds } }
+    )
+
+    return response.data
+  },
+
 }

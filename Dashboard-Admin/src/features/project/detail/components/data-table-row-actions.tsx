@@ -1,13 +1,14 @@
 'use client'
 
 import { Row } from '@tanstack/react-table'
-import { MoreHorizontal, Pencil, Trash2, Eye } from 'lucide-react'
+import { MoreHorizontal, Trash2, Eye, SquarePen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Task } from '../data/shema' 
@@ -32,7 +33,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-[160px]'>
+      <DropdownMenuContent align='end' className='w-44'>
         <DropdownMenuItem
           className='gap-2 text-sm'
           onClick={(e) => {
@@ -41,8 +42,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             setOpen('edit')
           }}
         >
-          <Eye size={14} className='text-muted-foreground' />
-          View details
+
+          Details
+          <DropdownMenuShortcut>
+            <Eye size={16} />
+          </DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem
           className='gap-2 text-sm'
@@ -52,8 +56,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             setOpen('edit')
           }}
         >
-          <Pencil size={14} className='text-muted-foreground' />
-          Edit task
+          Edit
+          <DropdownMenuShortcut>
+            <SquarePen size={16} />
+          </DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -65,7 +71,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           }}
         >
           <Trash2 size={14} />
-          Delete task
+          Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

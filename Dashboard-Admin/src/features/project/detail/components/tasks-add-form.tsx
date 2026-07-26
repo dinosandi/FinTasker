@@ -413,7 +413,7 @@ export function TasksAddForm({
               type='submit'
               size='sm'
               disabled={isPending}
-              className='gap-1.5'
+              className='gap-1.5 bg-[#FFD500] text-black hover:bg-[#FFD500]/90 disabled:bg-[#FFD500]/50 disabled:text-black/50'
             >
               {isPending ? (
                 <>
