@@ -1,5 +1,7 @@
 'use client'
 
+import Deleted from '@/assets/image/Deleted.svg'
+import { useBulkDeleteTasks } from '@/hooks/useMutation/Tasks/useBulkDeleteTasks'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,9 +13,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useTasks } from './tasks-provider'
-import { useBulkDeleteTasks } from '@/hooks/useMutation/Tasks/useBulkDeleteTasks'
-import Deleted from '@/assets/image/Deleted.svg'
-
 
 export function TasksMultiDeleteDialog() {
   const { open, setOpen, selectedTasks, setSelectedTasks } = useTasks()
@@ -38,42 +37,36 @@ export function TasksMultiDeleteDialog() {
         }
       }}
     >
-<AlertDialogContent className="max-w-md">
-  <AlertDialogHeader>
-    <AlertDialogTitle className="text-left">
-      Delete {selectedTasks.length} tasks?
-    </AlertDialogTitle>
+      <AlertDialogContent className='max-w-md'>
+        <AlertDialogHeader>
+          <AlertDialogTitle className='text-left'>
+            Delete {selectedTasks.length} tasks?
+          </AlertDialogTitle>
 
-    <AlertDialogDescription asChild>
-      <div className="flex flex-col items-center gap-4 text-center">
-        <img
-          src={Deleted}
-          alt="Delete Tasks"
-          className="h-45 w-auto"
-        />
+          <AlertDialogDescription asChild>
+            <div className='flex flex-col items-center gap-4 text-center'>
+              <img src={Deleted} alt='Delete Tasks' className='h-45 w-auto' />
 
-        <p>
-          This action cannot be undone. The selected tasks will be
-          permanently deleted.
-        </p>
-      </div>
-    </AlertDialogDescription>
-  </AlertDialogHeader>
+              <p>
+                This action cannot be undone. The selected tasks will be
+                permanently deleted.
+              </p>
+            </div>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
 
-  <AlertDialogFooter>
-    <AlertDialogCancel disabled={isPending}>
-      Cancel
-    </AlertDialogCancel>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
 
-    <AlertDialogAction
-      className="bg-[#FFD500] text-black hover:bg-[#FFD500]/90"
-      onClick={handleDelete}
-      disabled={isPending}
-    >
-      {isPending ? "Deleting..." : "Delete tasks"}
-    </AlertDialogAction>
-  </AlertDialogFooter>
-</AlertDialogContent>
+          <AlertDialogAction
+            className='bg-[#FFD500] text-black hover:bg-[#FFD500]/90'
+            onClick={handleDelete}
+            disabled={isPending}
+          >
+            {isPending ? 'Deleting...' : 'Delete tasks'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
     </AlertDialog>
   )
 }

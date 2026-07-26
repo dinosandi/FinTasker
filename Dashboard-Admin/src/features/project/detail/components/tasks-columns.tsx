@@ -135,7 +135,7 @@ export const tasksColumns: ColumnDef<Task>[] = [
     accessorKey: 'dueDate',
     header: () => (
       <span className='inline-flex items-center gap-1.5'>
-        <CalendarClock size={13} className='text-muted-foreground' />
+
         Due Date
       </span>
     ),

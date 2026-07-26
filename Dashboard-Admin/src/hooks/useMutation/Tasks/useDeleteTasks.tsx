@@ -1,11 +1,10 @@
-// src/hooks/useMutation/Tasks/useDeleteTasks.tsx
 import { api } from "@/config/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { ApiErrorResponse } from "@/Type/api";
 import { toast } from "sonner";
 
-export const useDeleteTasks = () => {
+export const useDeleteTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation<void, AxiosError<ApiErrorResponse>, string>({

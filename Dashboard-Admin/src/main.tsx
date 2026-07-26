@@ -17,6 +17,8 @@ import { useMe } from './hooks/useQuery/useMe'
 import { routeTree } from './routeTree.gen'
 import './styles/index.css'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { Classic } from "@/components/classic"
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -97,7 +99,9 @@ function App() {
   if (isLoading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
-        <p className="text-sm text-muted-foreground animate-pulse">Loading ...</p>
+        <p className="text-sm text-muted-foreground animate-pulse">
+          <Classic /> Loading user data...
+        </p>
       </div>
     )
   }
