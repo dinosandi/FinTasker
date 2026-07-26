@@ -108,35 +108,45 @@ export function TasksAddForm({
     onOpenChange(false)
   }
 
-  const onSubmit = (values: TaskFormValues) => {
-    mutate(
-      {
-        projectId,
-        title: values.title.trim(),
-        description: values.description?.trim() ?? '',
-        status: STATUS_TO_ENUM[values.status],
-        priority: PRIORITY_TO_ENUM[values.priority],
-        dueDate: values.dueDate ? new Date(values.dueDate).toISOString() : '',
-        completedAt: '',
-        estimed_Minutes: values.estimatedMinutes ?? 0,
+const onSubmit = (values: TaskFormValues) => {
+  mutate(
+    {
+      projectId,
+      title: values.title.trim(),
+      description: values.description?.trim() ?? '',
+      status: STATUS_TO_ENUM[values.status],
+      priority: PRIORITY_TO_ENUM[values.priority],
+      dueDate: values.dueDate
+        ? new Date(values.dueDate).toISOString()
+        : '',
+      completedAt: '',
+      estimed_Minutes: values.estimatedMinutes ?? 0,
+    },
+    {
+      onSuccess: () => {
+        toast.success('Task created', {
+          description: `"${values.title}" has been added to the project.`,
+        })
+
+        reset(TASK_FORM_DEFAULTS)
+        onOpenChange(false)
+        onSuccess?.()
       },
-      {
-        onSuccess: () => {
-          toast.success('Task created', {
-            description: `"${values.title}" has been added to the project.`,
-          })
-          reset(TASK_FORM_DEFAULTS)
-          onOpenChange(false)
-          onSuccess?.()
-        },
-        onError: (error) => {
-          toast.error('Failed to create task', {
-            description: error.response?.data?.message,
-          })
-        },
-      }
-    )
-  }
+
+      onError: (error) => {
+        const message =
+          error.response?.data?.errors?.[0] ??
+          error.response?.data?.message ??
+          error.message ??
+          'Failed to create task.'
+
+        toast.error('Failed to create task', {
+          description: message,
+        })
+      },
+    }
+  )
+}
 
   const statusMeta = TASK_STATUS.find((s) => s.value === watchedStatus)
   const priorityMeta = TASK_PRIORITY.find((p) => p.value === watchedPriority)
@@ -413,7 +423,7 @@ export function TasksAddForm({
               type='submit'
               size='sm'
               disabled={isPending}
-              className='gap-1.5'
+              className='gap-1.5 bg-[#FFD500] text-black hover:bg-[#FFD500]/90 disabled:bg-[#FFD500]/50 disabled:text-black/50'
             >
               {isPending ? (
                 <>

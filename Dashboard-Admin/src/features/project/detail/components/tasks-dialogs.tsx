@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { TasksAddForm } from './tasks-add-form'
 import { TasksMultiDeleteDialog } from './tasks-multi-delete-dialog'
+import { TasksDeleteDialog } from './tasks-delete-dialog'
 
 export function TasksDialogs() {
   const [open, setOpen] = useState(false)
@@ -12,6 +13,7 @@ export function TasksDialogs() {
         onOpenChange={setOpen}
       />
       <TasksMultiDeleteDialog />
+      <TasksDeleteDialog />
     </>
   )
 }

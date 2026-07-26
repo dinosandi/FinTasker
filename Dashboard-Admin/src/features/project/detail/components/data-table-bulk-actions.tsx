@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
-import { Trash2, CircleArrowUp, ArrowUpDown, Download } from 'lucide-react'
+import { Trash2, CircleArrowUp, ArrowUpDown } from 'lucide-react'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -16,9 +15,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { TASK_STATUS,TASK_PRIORITY } from '../data/data' 
-import { type Task } from '../data/shema' 
+import { TASK_STATUS, TASK_PRIORITY } from '../data/data'
+import { type Task } from '../data/shema'
 import { TasksMultiDeleteDialog } from './tasks-multi-delete-dialog'
+import { useTasks } from './tasks-provider'
 
 type DataTableBulkActionsProps<TData> = {
   table: Table<TData>
@@ -27,8 +27,14 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
   table,
 }: DataTableBulkActionsProps<TData>) {
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const selectedRows = table.getFilteredSelectedRowModel().rows
+  const { setOpen, setSelectedTasks } = useTasks()
+
+  const handleDeleteClick = () => {
+    const selectedTasks = selectedRows.map((row) => row.original as Task)
+    setSelectedTasks(selectedTasks)
+    setOpen('bulk-delete')
+  }
 
   const handleBulkStatusChange = (status: string) => {
     const selectedTasks = selectedRows.map((row) => row.original as Task)
@@ -50,19 +56,6 @@ export function DataTableBulkActions<TData>({
       success: () => {
         table.resetRowSelection()
         return `Priority updated to "${priority}" for ${selectedTasks.length} task${selectedTasks.length > 1 ? 's' : ''}.`
-      },
-      error: 'Error',
-    })
-    table.resetRowSelection()
-  }
-
-  const handleBulkExport = () => {
-    const selectedTasks = selectedRows.map((row) => row.original as Task)
-    toast.promise(sleep(2000), {
-      loading: 'Exporting tasks...',
-      success: () => {
-        table.resetRowSelection()
-        return `Exported ${selectedTasks.length} task${selectedTasks.length > 1 ? 's' : ''} to CSV.`
       },
       error: 'Error',
     })
@@ -147,28 +140,9 @@ export function DataTableBulkActions<TData>({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              variant='outline'
-              size='icon'
-              onClick={() => handleBulkExport()}
-              className='size-8'
-              aria-label='Export tasks'
-              title='Export tasks'
-            >
-              <Download />
-              <span className='sr-only'>Export tasks</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Export tasks</p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
               variant='destructive'
               size='icon'
-              onClick={() => setShowDeleteConfirm(true)}
+              onClick={handleDeleteClick}
               className='size-8'
               aria-label='Delete selected tasks'
               title='Delete selected tasks'
@@ -183,11 +157,7 @@ export function DataTableBulkActions<TData>({
         </Tooltip>
       </BulkActionsToolbar>
 
-      <TasksMultiDeleteDialog
-        open={showDeleteConfirm}
-        onOpenChange={setShowDeleteConfirm}
-        table={table}
-      />
+      <TasksMultiDeleteDialog />
     </>
   )
 }

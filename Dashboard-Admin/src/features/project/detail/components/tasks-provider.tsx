@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState } from 'react'
 import { Task } from '../data/shema' 
 
-type TasksDialogType = 'create' | 'edit' | 'delete' | 'import' | 'bulk-delete'
+type TasksDialogType = 'create' | 'edit' | 'delete'  | 'bulk-delete'
 
 interface TasksContextType {
   open: TasksDialogType | null
